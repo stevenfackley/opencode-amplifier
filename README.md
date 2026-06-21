@@ -19,10 +19,14 @@ hostile verification, and explicit recovery* — is baked into the structure bel
 |---|---|---|
 | Standing rails | `AGENTS.md` | The 9 rules every turn obeys; the contract |
 | Task ledger | `.opencode/templates/TASK.template.json` | Single source of truth; survives context loss |
-| Skills (native) | `.opencode/skills/` | `brainstorming`, `test-driven-development`, `verification-before-completion`, `creative-naming`, `distinctive-ui-design`, `reviewing-others-code`, `consuming-shared-libraries`, `dotnet-standard-2.0-compat`, `porting-angular-to-mobile` |
+| Skills (native) | `.opencode/skills/` | `brainstorming`, `test-driven-development`, `verification-before-completion`, `creative-naming`, `distinctive-ui-design`, `reviewing-others-code`, `consuming-shared-libraries`, `dotnet-standard-2.0-compat`, `porting-angular-to-mobile`, `accessibility-508` |
 | Agents (per-model) | `.opencode/agent/` | `architect`, `tester`, `reviewer`, `reviewer-cheap`, `debugger`, `designer`, `pr-reviewer` |
-| Commands | `.opencode/command/` | `/plan /spec-tests /verify /consistency /review /debug /pattern /cross-check /evidence /reground /revert-green /name /design /review-pr /explain /pr-description /adr /commit /swift-client /port-from-angular` |
+| Commands | `.opencode/command/` | `/plan /spec-tests /verify /consistency /review /debug /pattern /cross-check /evidence /reground /revert-green /name /design /review-pr /explain /pr-description /adr /commit /swift-client /port-from-angular /a11y-review /capture-pattern /setup` |
+| Plugins (hooks) | `.opencode/plugins/` | `tdd-lock`, `compaction`, `escalation`, `guardrails`, `metrics` |
 | Cheat sheet | `USAGE.md` | One-line "reach for this when…" for every command/skill/agent, grouped by workflow |
+| Onboarding / team | `ONBOARDING.md`, `CONTRIBUTING.md`, `.opencode/command/setup.md` | Get a teammate amplified in 5 min; how to extend the kit; `/setup` bootstrap |
+| ROI / metrics | `eval/METRICS.md`, `metrics` plugin | Measure kit-vs-baseline on real tasks; the team-adoption + perf-review evidence |
+| Examples / docs | `examples/`, `docs/` | Internal overlay example; contract-pipeline proposal + CI/codegen templates |
 | Plugins (hooks) | `.opencode/plugins/` | `tdd-lock`, `compaction`, `escalation`, `guardrails` |
 | Pattern corpus | `patterns/` + `PATTERNS.md` | Golden examples with fitness metadata; adapt, don't invent |
 | Memory | `memory/MEMORY.md` | Durable cross-session notes (auto-loaded) |
