@@ -50,6 +50,7 @@ topology: "<where it lives, e.g. service/domain layer>"
 | `maui-di-services` | C# | Wiring MAUI services/VMs/pages via constructor injection | Non-MAUI; trivial app w/o services | 2026-06-21 |
 | `swift-observable-viewmodel` | Swift | SwiftUI model w/ async load + state, iOS 17+ | Below iOS 17; view-local state only | 2026-06-21 |
 | `swift-actor-state` | Swift | Shared mutable state across concurrent tasks, race-free | Single-task state; UI state | 2026-06-21 |
+| `design-tokens` | CSS | Starting a UI; want a cohesive, tunable, non-generic aesthetic | One-off page; component-lib tokens already set | 2026-06-21 |
 
 ## How to add a pattern
 1. Copy `patterns/_TEMPLATE/` to `patterns/<your-name>/`.
