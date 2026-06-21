@@ -51,6 +51,8 @@ topology: "<where it lives, e.g. service/domain layer>"
 | `swift-observable-viewmodel` | Swift | SwiftUI model w/ async load + state, iOS 17+ | Below iOS 17; view-local state only | 2026-06-21 |
 | `swift-actor-state` | Swift | Shared mutable state across concurrent tasks, race-free | Single-task state; UI state | 2026-06-21 |
 | `design-tokens` | CSS | Starting a UI; want a cohesive, tunable, non-generic aesthetic | One-off page; component-lib tokens already set | 2026-06-21 |
+| `swift-api-client` | Swift | Swift app consuming a REST/contract from another team's backend | Throwaway call; official SDK exists | 2026-06-21 |
+| `dotnet-multitarget-library` | C# | Shared lib must support old + new runtimes (ns2.0 + net10) | Single-runtime app; the mobile side | 2026-06-21 |
 
 ## How to add a pattern
 1. Copy `patterns/_TEMPLATE/` to `patterns/<your-name>/`.
