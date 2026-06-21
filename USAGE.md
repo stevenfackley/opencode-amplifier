@@ -40,12 +40,19 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 |---|---|
 | `/name <concept>` | Naming a product/feature → distinctive candidates + availability, no `-ly`/`Smart-` slop |
 | `/design <brief>` | Building UI → commits to a bold aesthetic, avoids generic AI look (designer agent) |
+| `/a11y-review <screen>` | A user-facing screen → audit it for Section 508 / WCAG (compliance, required) |
 
 ### Cross-team / cross-stack
 | Command | Reach for it when… |
 |---|---|
 | `/swift-client <contract>` | Consuming a backend from Swift → typed client + anti-corruption mapping |
 | `/port-from-angular <feature>` | Reproducing an Angular app on mobile → extracts a reproduction spec |
+
+### Team & meta
+| Command | Reach for it when… |
+|---|---|
+| `/setup` | Bootstrapping the kit on a project/teammate's machine → wires config, models, verifies |
+| `/capture-pattern <solution>` | You solved something reusable → promote it into the corpus (compounds for everyone) |
 
 ---
 
@@ -61,6 +68,7 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 | `consuming-shared-libraries` | Depending on another team's lib/contract — ACL, pin, never fork |
 | `dotnet-standard-2.0-compat` | Touching shared .NET code — stay on the ns2.0 compile floor |
 | `porting-angular-to-mobile` | Reproducing an Angular feature on mobile — extract the spec |
+| `accessibility-508` | Building/reviewing user-facing UI — 508/WCAG (legal mandate for defense) |
 
 ## Agents (call with `@name` or via a command)
 | Agent | Model role | Purpose |
@@ -80,9 +88,10 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 | `compaction` | Re-injects the brief after context compaction |
 | `escalation` | Warns to escalate after repeated non-advancing failures |
 | `guardrails` | Blocks reading secret files; session-idle hook |
+| `metrics` | Optional ROI telemetry → local collector (set `METRICS_ENDPOINT`); off by default |
 
 ## Patterns
-14 golden examples (C#/.NET, MAUI, Swift, SwiftUI, TS, Python, CSS, Angular). Browse
+15 golden examples (C#/.NET, MAUI, Swift, SwiftUI, TS, Python, CSS, Angular). Browse
 **`PATTERNS.md`** — pick by *fit* (applicability predicates), not similarity, and pull with
 `/pattern <name>`.
 

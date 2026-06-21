@@ -1,0 +1,18 @@
+# EXAMPLE config for Apple's swift-openapi-generator (openapi-generator-config.yaml).
+# Place next to your openapi.yaml; the SwiftPM plugin reads it. Generates the WIRE layer only —
+# your anti-corruption layer (see patterns/swift-api-client) maps these into your domain types.
+
+generate:
+  - types        # Codable models from the schema (the wire DTOs)
+  - client       # an async/await client from the paths
+
+# Keep generated code namespaced so it's obviously "their contract", not your domain.
+accessModifier: internal
+
+# Optional: pin naming so generated symbols are stable/readable.
+namingStrategy: idiomatic
+
+# filter:        # generate only the slices the mobile app needs (smaller surface, less churn)
+#   paths:
+#     - /widgets
+#     - /widgets/{id}

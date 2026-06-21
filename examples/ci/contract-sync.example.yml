@@ -1,0 +1,47 @@
+# EXAMPLE GitHub Actions workflow — contract drift gate (NEEDS APPROVAL to wire live).
+# Fetches the shared .NET service's OpenAPI, regenerates the Swift client, and fails the build if
+# the generated surface drifts from what's committed. Replace ALL <PLACEHOLDERS>.
+#
+# Locked-down network? Drop the "Fetch" step and commit the spec manually on each agreed update —
+# the generate + drift-check steps still protect you against the committed spec.
+
+name: contract-sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 13 * * 1"        # weekly Monday — adjust
+  pull_request:
+    paths: ["openapi/**", "Sources/Generated/**"]
+
+jobs:
+  contract-drift:
+    runs-on: macos-latest        # or a self-hosted runner that can reach the service
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Fetch the published contract (skip if you commit the spec manually).
+      - name: Fetch OpenAPI spec
+        run: |
+          curl -fsSL "<INTERNAL_OPENAPI_URL>" -o openapi/spec.yaml
+        # Add auth header / OIDC as your environment requires.
+
+      # 2. Regenerate the Swift client from the spec.
+      - name: Generate Swift client
+        run: |
+          # Apple swift-openapi-generator via SwiftPM plugin, or the CLI:
+          swift package plugin generate-code-from-openapi --allow-writing-to-package-directory || \
+          openapi-generator-cli generate -i openapi/spec.yaml -g swift6 -o Sources/Generated
+
+      # 3. Drift gate: fail if regeneration changed anything that isn't committed.
+      - name: Fail on contract drift
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Contract drift detected — the backend contract changed. Review the diff."
+            git --no-pager diff --stat
+            exit 1
+          fi
+
+      # 4. (optional) Run contract tests that assert your ACL still maps the generated types.
+      - name: Contract tests
+        run: swift test --filter Contract

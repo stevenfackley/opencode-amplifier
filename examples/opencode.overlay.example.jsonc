@@ -1,0 +1,44 @@
+{
+  // INTERNAL OVERLAY EXAMPLE — keep a filled-in version of this in a PRIVATE team repo, never in
+  // the public kit. It layers your real proxy IDs + team conventions over the generic kit.
+  //
+  // Usage: merge into the project's opencode.jsonc, or keep as the team's ~/.config/opencode config.
+  "$schema": "https://opencode.ai/config.json",
+
+  // Real proxy wiring (values live in your private repo / env, not here).
+  "provider": {
+    "lmproxy": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LM AI Factory",
+      "options": {
+        "baseURL": "https://YOUR-REAL-PROXY/v1",
+        "apiKey": "{env:LM_PROXY_API_KEY}"
+      },
+      "models": {
+        // Replace with the EXACT IDs from `opencode models`.
+        "REAL-sonnet-4-5-id": { "name": "Sonnet 4.5" },
+        "REAL-gpt-5.1-id": { "name": "GPT-5.1" },
+        "REAL-nemotron-id": { "name": "Nemotron (cheap)" }
+      }
+    }
+  },
+  "model": "lmproxy/REAL-sonnet-4-5-id",
+
+  // Load team conventions on top of the kit's AGENTS.md (your private coding standards, the shared
+  // libs' ns2.0 constraints, the API contract location, naming, etc.).
+  "instructions": [
+    "AGENTS.md",
+    "memory/MEMORY.md",
+    "team/CONVENTIONS.md"          // <- your private team standards
+  ],
+
+  // Internal MCP servers (only what's approved): internal docs, issue tracker, the live API
+  // contract spec, etc. Add as approvals come through.
+  "mcp": {
+    "patterns": { "type": "local", "command": ["npx","-y","@modelcontextprotocol/server-filesystem","./patterns"], "enabled": true }
+    // "internal-docs": { "type": "remote", "url": "https://INTERNAL", "enabled": true }
+  }
+
+  // Tip: pin which model each agent uses here too, if you don't want to edit the kit's agent files
+  // directly — keeps the public kit pristine and your real choices in the private overlay.
+}
