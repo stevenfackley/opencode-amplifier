@@ -1,0 +1,41 @@
+{
+  "//": "Canonical task ledger. The architect EMITS this from /plan; the executor UPDATES it every turn; the reviewer/tester READ it. It is the single source of truth that survives context loss. Copy to ./TASK.json at task start.",
+
+  "task": "short title",
+  "goal": "one sentence: the outcome that means this is done",
+  "status": "planning",                         // planning | in_progress | blocked | done
+  "work_type": "brownfield",                    // brownfield | greenfield
+
+  "invariants": [
+    "things that must remain TRUE throughout (e.g. 'public API of Foo unchanged')"
+  ],
+  "touched_files": [],                          // files the plan intends to change
+  "forbidden_files": [
+    "files/globs the executor must NOT modify (e.g. '**/*.test.*' while implementing)"
+  ],
+  "acceptance_tests": [
+    "exact commands/test names that prove the whole task is done"
+  ],
+  "patterns": [],                               // pattern IDs adapted, e.g. 'result-railway'
+
+  "steps": [
+    {
+      "id": 1,
+      "desc": "small, single-turn unit of work",
+      "pattern": null,                          // pattern ID adapted, or null
+      "files": [],
+      "verify": "the exact check that proves THIS step works",
+      "status": "todo",                         // todo | doing | done
+      "evidence": null,                         // paste the verify output here when done
+      "deviations": []                          // anything done outside the plan, justified
+    }
+  ],
+
+  "current_step": 1,
+  "retries": {},                                // {"step_id": count} — escalate when this climbs
+
+  "assumptions_accepted": [],                   // load-bearing assumptions (so they're auditable)
+  "hypotheses_rejected": [],                    // dead ends, so they aren't re-tried
+  "open_risks": [],
+  "rollback": "last known-green commit SHA / how to revert"
+}

@@ -1,0 +1,78 @@
+{
+  // opencode reads opencode.jsonc (comments allowed). Merge into your project's existing config
+  // if you have one. Everything in CAPS_PLACEHOLDER must be replaced.
+  //
+  // Auto-discovered from .opencode/ (no config needed): agent/, command/, skills/, plugins/.
+  // OpenCode also auto-discovers .claude/skills/ — so your existing superpowers skills work too.
+  "$schema": "https://opencode.ai/config.json",
+
+  // --- 1. Point OpenCode at the Lockheed AI-factory proxy (OpenAI-compatible) ----------------
+  // The PROVIDER KEY ("lmproxy") is the prefix in every agent's `model:` field.
+  "provider": {
+    "lmproxy": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LM AI Factory",
+      "options": {
+        "baseURL": "https://PROXY_HOST/v1",       // <-- replace
+        "apiKey": "{env:LM_PROXY_API_KEY}"         // <-- export in your shell
+      },
+      "models": {
+        "claude-sonnet-4-5": { "name": "Sonnet 4.5" },
+        "claude-3-7-sonnet": { "name": "Sonnet 3.7" },
+        "gpt-5.1":           { "name": "GPT-5.1" },
+        "gpt-oss":           { "name": "gpt-oss (cheap)" },
+        "nemotron":          { "name": "Nemotron (cheap)" },
+        "mistral":           { "name": "Mistral (cheap)" }
+      }
+    }
+  },
+  "model": "lmproxy/claude-sonnet-4-5",            // default for the Build/executor agent
+
+  // --- 2. Always-on instructions (combined with AGENTS.md) ----------------------------------
+  // Globs and even remote URLs are supported. This loads the rails + durable memory every turn.
+  "instructions": [
+    "AGENTS.md",
+    "memory/MEMORY.md",
+    ".cursor/rules/*.md"                            // harmless if absent; pulls any IDE rules too
+  ],
+
+  // --- 3. MCP servers (toggle with "enabled") -----------------------------------------------
+  "mcp": {
+    // Retrieval over the pattern corpus.
+    "patterns": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "./patterns"],
+      "enabled": true
+    },
+    // Authoritative API docs -> kills hallucinated APIs (top weak-model failure, esp. .NET).
+    // Prefer an internal mirror if external fetch isn't approved.
+    "docs": {
+      "type": "remote",
+      "url": "https://INTERNAL_DOCS_MCP",
+      "enabled": false
+    },
+    // Repo awareness across multi-step work.
+    "git": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-git", "--repository", "."],
+      "enabled": false
+    },
+    // Cross-session semantic memory (search past conversations) — your CC episodic-memory analog.
+    "episodic-memory": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "enabled": false
+    },
+    // Browser verification (E2E checks) — your CC playwright analog.
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": false
+    }
+  }
+
+  // --- 4. TDD lock (used by the tdd-lock plugin) --------------------------------------------
+  // Not a config key — set in your shell before the executor implements:
+  //   export TDD_LOCK_TESTS=1   (PowerShell:  $env:TDD_LOCK_TESTS = "1")
+  // Unset it to deliberately change a test.
+}

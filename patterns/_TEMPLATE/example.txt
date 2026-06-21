@@ -1,0 +1,2 @@
+Replace this file with the worked example (Result.cs, state.ts, pipeline.py, etc.).
+Keep it to roughly one screen. Comment the *decision points*, not the syntax.
