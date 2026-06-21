@@ -82,8 +82,9 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 | `guardrails` | Blocks reading secret files; session-idle hook |
 
 ## Patterns
-13 golden examples (C#/.NET, MAUI, Swift, TS, Python, CSS, Angular). Browse **`PATTERNS.md`** —
-pick by *fit* (applicability predicates), not similarity, and pull with `/pattern <name>`.
+14 golden examples (C#/.NET, MAUI, Swift, SwiftUI, TS, Python, CSS, Angular). Browse
+**`PATTERNS.md`** — pick by *fit* (applicability predicates), not similarity, and pull with
+`/pattern <name>`.
 
 ---
 

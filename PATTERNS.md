@@ -54,6 +54,7 @@ topology: "<where it lives, e.g. service/domain layer>"
 | `swift-api-client` | Swift | Swift app consuming a REST/contract from another team's backend | Throwaway call; official SDK exists | 2026-06-21 |
 | `dotnet-multitarget-library` | C# | Shared lib must support old + new runtimes (ns2.0 + net10) | Single-runtime app; the mobile side | 2026-06-21 |
 | `angular-feature-anatomy` | TS | Reading an Angular feature to reproduce it on mobile | Building/maintaining Angular itself | 2026-06-21 |
+| `swiftui-screen-editorial` | Swift | Building a SwiftUI screen to the distinctive-ui-design standard | Standard system form; below iOS 17 | 2026-06-21 |
 
 ## How to add a pattern
 1. Copy `patterns/_TEMPLATE/` to `patterns/<your-name>/`.
