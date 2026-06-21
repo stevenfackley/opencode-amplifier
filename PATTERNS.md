@@ -46,6 +46,10 @@ topology: "<where it lives, e.g. service/domain layer>"
 | `dotnet-minimal-api-slice` | C# | Adding an endpoint to a minimal-API app; want feature colocated | Existing MVC controllers; multi-aggregate transactions | 2026-06-21 |
 | `retry-with-backoff` | TS | Calling a flaky/idempotent remote dependency | Non-idempotent writes w/o idempotency key; deterministic errors | 2026-06-21 |
 | `python-typed-settings` | Py | App reads config from env/.env; want fail-fast validation | One-off scripts; vault-managed secrets | 2026-06-21 |
+| `maui-mvvm-toolkit` | C# | MAUI ViewModel binding to async data w/ loading/error state | Static pages; non-MAUI .NET | 2026-06-21 |
+| `maui-di-services` | C# | Wiring MAUI services/VMs/pages via constructor injection | Non-MAUI; trivial app w/o services | 2026-06-21 |
+| `swift-observable-viewmodel` | Swift | SwiftUI model w/ async load + state, iOS 17+ | Below iOS 17; view-local state only | 2026-06-21 |
+| `swift-actor-state` | Swift | Shared mutable state across concurrent tasks, race-free | Single-task state; UI state | 2026-06-21 |
 
 ## How to add a pattern
 1. Copy `patterns/_TEMPLATE/` to `patterns/<your-name>/`.
