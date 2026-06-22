@@ -67,12 +67,15 @@ a step it can't do.
    file.
 
 ## Model tiering (preserve premium quota)
-| Tier | Models | Use for |
+Models referenced by **bare ID** (no provider prefix). Defaults wired across 4 families so the
+`/review` consensus vote has uncorrelated blind spots:
+| Tier | Models (bare IDs) | Use for |
 |---|---|---|
-| Reasoning | GPT-5.1 / Sonnet 4.5 (thinking on if exposed) | architect, tester, debugger, primary reviewer |
-| Executor | Sonnet 4.5 | the Build agent, step edits |
-| Decorrelated review | Nemotron / gpt-oss | reviewer-cheap (different blind spots) |
-| Mechanical | gpt-oss / nemotron / mistral | commit messages, boilerplate, renames |
+| Reasoning | `gpt-5.1`, `nemotron-3-ultra-550b-a55b`, `mistral-large-3-675b-instruct-2512` | architect, tester, debugger, reviewer |
+| Executor | `claude-4-5-sonnet-latest` | the Build agent, step edits, designer |
+| Decorrelated review | `nemotron-3-nano-30b-a3b` (1M ctx) | reviewer-cheap (different blind spots) |
+| Mechanical | `devstral-small-2-24b-instruct-2512`, `gemma-4-31b-it` | commit messages, boilerplate, renames |
+| Huge context | `llama-4-scout`, `nemotron-3-super-120b-a12b` (1M) | reading whole Angular apps for `/port-from-angular` |
 
 ## Claude Code parity
 OpenCode is Claude-Code-compatible: it auto-discovers `.claude/skills/` and falls back to

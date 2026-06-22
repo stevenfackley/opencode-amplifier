@@ -15,14 +15,16 @@
         "apiKey": "{env:LM_PROXY_API_KEY}"
       },
       "models": {
-        // Replace with the EXACT IDs from `opencode models`.
-        "REAL-sonnet-4-5-id": { "name": "Sonnet 4.5" },
-        "REAL-gpt-5.1-id": { "name": "GPT-5.1" },
-        "REAL-nemotron-id": { "name": "Nemotron (cheap)" }
+        // The EXACT IDs from `opencode models` (adjust if your proxy's catalog differs).
+        "claude-4-5-sonnet-latest": { "name": "Sonnet 4.5" },
+        "gpt-5.1": { "name": "GPT-5.1" },
+        "nemotron-3-ultra-550b-a55b": { "name": "Nemotron Ultra (reasoning)" },
+        "mistral-large-3-675b-instruct-2512": { "name": "Mistral Large 3" },
+        "nemotron-3-nano-30b-a3b": { "name": "Nemotron Nano (cheap, 1M ctx)" }
       }
     }
   },
-  "model": "lmproxy/REAL-sonnet-4-5-id",
+  "model": "claude-4-5-sonnet-latest",     // bare ID — no provider prefix
 
   // Load team conventions on top of the kit's AGENTS.md (your private coding standards, the shared
   // libs' ns2.0 constraints, the API contract location, naming, etc.).
@@ -35,7 +37,8 @@
   // Internal MCP servers (only what's approved): internal docs, issue tracker, the live API
   // contract spec, etc. Add as approvals come through.
   "mcp": {
-    "patterns": { "type": "local", "command": ["npx","-y","@modelcontextprotocol/server-filesystem","./patterns"], "enabled": true }
+    // Windows: wrap npx in `cmd /c` or you get "MCP error -32000 connection closed". POSIX: drop it.
+    "patterns": { "type": "local", "command": ["cmd","/c","npx","-y","@modelcontextprotocol/server-filesystem","./patterns"], "enabled": true }
     // "internal-docs": { "type": "remote", "url": "https://INTERNAL", "enabled": true }
   }
 

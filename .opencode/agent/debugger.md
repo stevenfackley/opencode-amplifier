@@ -1,7 +1,7 @@
 ---
 description: Disciplined debugger. Enforces a reproduce -> hypothesize -> instrument -> isolate -> fix -> verify protocol so the model can't flail or patch symptoms.
 mode: subagent
-model: lmproxy/gpt-5.1          # <-- a STRONG reasoning model; replace with a real proxy ID
+model: nemotron-3-ultra-550b-a55b   # biggest reasoner (550B), 262k ctx for logs+code. If latency hurts, drop to gpt-5.1
 temperature: 0.1
 ---
 

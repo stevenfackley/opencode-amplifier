@@ -1,7 +1,7 @@
 ---
 description: Decorrelated second reviewer on a CHEAP, architecturally-different model. Different training distribution = different blind spots. Used in the /review consensus vote.
 mode: subagent
-model: lmproxy/nemotron        # <-- a CHEAP, different-family model (Nemotron/Mistral/gpt-oss)
+model: nemotron-3-nano-30b-a3b   # cheap, fast, 1M ctx (sees whole repo); NVIDIA family ≠ reviewer's Mistral. Alt: devstral-small-2-24b-instruct-2512
 temperature: 0.1
 permission:
   edit: deny

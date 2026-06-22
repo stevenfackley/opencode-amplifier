@@ -1,6 +1,6 @@
 ---
 description: Generate distinctive product/app/company names (creative-naming) with rationale + availability
-model: lmproxy/gpt-5.1     # <-- a strong model for creative range; replace with a real ID
+model: gpt-5.1     # creative range across naming techniques
 ---
 
 Follow the `creative-naming` skill. From the concept below: extract the essence, generate 15–20

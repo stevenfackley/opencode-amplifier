@@ -1,6 +1,6 @@
 ---
 description: Write an Architecture Decision Record (ADR) for a significant technical decision
-model: lmproxy/gpt-5.1     # <-- strong model for the reasoning; replace with a real ID
+model: gpt-5.1     # strong reasoner for weighing alternatives
 ---
 
 Write an ADR for the decision below. Investigate the relevant code first so the context and

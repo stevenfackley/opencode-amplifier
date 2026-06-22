@@ -1,7 +1,7 @@
 ---
 description: Read-only planner. Turns a task into a numbered, verifiable checklist plan that names which golden pattern each step adapts. Invoke for any non-trivial change.
 mode: subagent
-model: lmproxy/gpt-5.1          # <-- a STRONG reasoning model; replace with a real proxy ID
+model: gpt-5.1          # strong reasoner, non-Claude (decorrelated from the Claude executor). Alt: nemotron-3-ultra-550b-a55b
 temperature: 0.1
 permission:
   edit: deny
