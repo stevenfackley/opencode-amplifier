@@ -7,7 +7,8 @@
   "$schema": "https://opencode.ai/config.json",
 
   // --- 1. Point OpenCode at the Lockheed AI-factory proxy (OpenAI-compatible) ----------------
-  // The PROVIDER KEY ("lmproxy") is the prefix in every agent's `model:` field.
+  // Provider is keyed "lmproxy" (baseURL/apiKey/models below). Agents reference models by BARE
+  // name (e.g. `model: gpt-5.1`) — this proxy resolves them without a provider/ prefix.
   "provider": {
     "lmproxy": {
       "npm": "@ai-sdk/openai-compatible",
@@ -17,16 +18,23 @@
         "apiKey": "{env:LM_PROXY_API_KEY}"         // <-- export in your shell
       },
       "models": {
-        "claude-sonnet-4-5": { "name": "Sonnet 4.5" },
-        "claude-3-7-sonnet": { "name": "Sonnet 3.7" },
-        "gpt-5.1":           { "name": "GPT-5.1" },
-        "gpt-oss":           { "name": "gpt-oss (cheap)" },
-        "nemotron":          { "name": "Nemotron (cheap)" },
-        "mistral":           { "name": "Mistral (cheap)" }
+        "claude-4-5-sonnet-latest":           { "name": "Sonnet 4.5 — executor/designer (200k)" },
+        "claude-3-7-sonnet-latest":           { "name": "Sonnet 3.7 (200k)" },
+        "gpt-5.1":                            { "name": "GPT-5.1 — architect/tester/pr-reviewer (200k)" },
+        "nemotron-3-ultra-550b-a55b":         { "name": "Nemotron Ultra 550B — debugger, top reasoner (262k)" },
+        "nemotron-3-super-120b-a12b":         { "name": "Nemotron Super 120B (1M ctx)" },
+        "nemotron-3-nano-30b-a3b":            { "name": "Nemotron Nano 30B — reviewer-cheap, fast (1M ctx)" },
+        "mistral-large-3-675b-instruct-2512": { "name": "Mistral Large 3 675B — reviewer (294k)" },
+        "mistral-small-4-119b-2603":          { "name": "Mistral Small 4 119B (262k)" },
+        "devstral-small-2-24b-instruct-2512": { "name": "Devstral 24B — coding-tuned, cheap; /commit (290k)" },
+        "mamba-codestral-7b-v0.1":            { "name": "Codestral Mamba 7B — fast code (128k)" },
+        "llama-4-scout":                      { "name": "Llama 4 Scout — 1M ctx, whole-codebase reads" },
+        "gpt-oss-120b":                       { "name": "gpt-oss 120B (131k)" },
+        "gemma-4-31b-it":                     { "name": "Gemma 4 31B — cheap mechanical (262k)" }
       }
     }
   },
-  "model": "lmproxy/claude-sonnet-4-5",            // default for the Build/executor agent
+  "model": "claude-4-5-sonnet-latest",             // default for the Build/executor agent (bare ID)
 
   // --- 2. Always-on instructions (combined with AGENTS.md) ----------------------------------
   // Globs and even remote URLs are supported. This loads the rails + durable memory every turn.
@@ -37,36 +45,51 @@
   ],
 
   // --- 3. MCP servers (toggle with "enabled") -----------------------------------------------
+  //
+  // ⚠️ WINDOWS GOTCHA (causes "MCP error -32000 connection closed"):
+  //   OpenCode spawns the command as a RAW process (no shell). On Windows, `npx`/`uvx` are
+  //   `.cmd`/`.ps1` shims, NOT `.exe` — Windows refuses to exec them directly ("%1 is not a
+  //   valid Win32 application"), the stdio pipe closes before the handshake, and you get -32000.
+  //   FIX: wrap in `cmd /c ...` so cmd.exe (a real binary) resolves the shim via PATHEXT.
+  //   On macOS/Linux drop the ["cmd","/c", ...] prefix — use the POSIX form in each comment.
+  //   Locked-down npm? `npx -y` reaches the registry on every launch; if blocked, `npm i -g`
+  //   the server from your internal mirror and point the command at the installed binary.
   "mcp": {
-    // Retrieval over the pattern corpus.
+    // Retrieval over the pattern corpus. (Optional — /pattern and @patterns/<name> read files
+    // directly and need NO MCP, so you can also just disable this and lose nothing functional.)
     "patterns": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "./patterns"],
+      "command": ["cmd", "/c", "npx", "-y", "@modelcontextprotocol/server-filesystem", "./patterns"],
+      // POSIX: ["npx", "-y", "@modelcontextprotocol/server-filesystem", "./patterns"]
       "enabled": true
     },
     // Authoritative API docs -> kills hallucinated APIs (top weak-model failure, esp. .NET).
-    // Prefer an internal mirror if external fetch isn't approved.
+    // Prefer an internal mirror if external fetch isn't approved. (Remote = no spawn, no cmd /c.)
     "docs": {
       "type": "remote",
       "url": "https://INTERNAL_DOCS_MCP",
       "enabled": false
     },
-    // Repo awareness across multi-step work.
+    // Repo awareness across multi-step work. NOTE: server-git is a PYTHON package — run via uvx
+    // (pip/uv), NOT npx. (Earlier this pointed at npx and would never have started.)
     "git": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-git", "--repository", "."],
+      "command": ["cmd", "/c", "uvx", "mcp-server-git", "--repository", "."],
+      // POSIX: ["uvx", "mcp-server-git", "--repository", "."]
       "enabled": false
     },
     // Cross-session semantic memory (search past conversations) — your CC episodic-memory analog.
     "episodic-memory": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "command": ["cmd", "/c", "npx", "-y", "@modelcontextprotocol/server-memory"],
+      // POSIX: ["npx", "-y", "@modelcontextprotocol/server-memory"]
       "enabled": false
     },
     // Browser verification (E2E checks) — your CC playwright analog.
     "playwright": {
       "type": "local",
-      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "command": ["cmd", "/c", "npx", "-y", "@playwright/mcp@latest"],
+      // POSIX: ["npx", "-y", "@playwright/mcp@latest"]
       "enabled": false
     }
   }

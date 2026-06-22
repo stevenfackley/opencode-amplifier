@@ -1,7 +1,7 @@
 ---
 description: Read-only staff-level reviewer for OTHER people's pull requests. Embodies reviewing-others-code — collaborative, severity-labeled, mentoring. Never edits the code under review.
 mode: all
-model: lmproxy/gpt-5.1     # <-- a strong reasoning model; replace with a real proxy ID
+model: gpt-5.1     # strong general reviewer. Alt for huge PRs: mistral-large-3-675b-instruct-2512 (294k ctx)
 temperature: 0.2
 permission:
   edit: deny              # never modify someone else's branch; bash stays on to fetch diffs / run it

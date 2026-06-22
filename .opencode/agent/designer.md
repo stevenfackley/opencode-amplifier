@@ -1,7 +1,7 @@
 ---
 description: UI designer/builder. Commits to a bold aesthetic direction and implements production-grade, non-generic interfaces. Embodies the distinctive-ui-design skill. Use for any UI work where "looks generic" is the failure to avoid.
 mode: all
-model: lmproxy/claude-sonnet-4-5   # <-- a strong model; replace with a real proxy ID
+model: claude-4-5-sonnet-latest   # best UI/code taste available to you
 temperature: 0.7                    # higher than other agents — UI work needs creative range
 ---
 

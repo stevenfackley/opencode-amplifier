@@ -1,5 +1,6 @@
 ---
 description: Write a Conventional Commit message from the staged changes (does not commit)
+model: devstral-small-2-24b-instruct-2512   # cheap + coding-tuned — mechanical task, preserves premium quota
 ---
 
 Staged summary:

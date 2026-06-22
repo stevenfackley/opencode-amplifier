@@ -1,7 +1,7 @@
 ---
 description: Primary cross-model reviewer. Reviews the diff against TASK.json AND the real test output (not diff-only). Run after every non-trivial step; pairs with reviewer-cheap in /review.
 mode: subagent
-model: lmproxy/claude-sonnet-4-5   # <-- set to a DIFFERENT model than your executor
+model: mistral-large-3-675b-instruct-2512   # frontier, 3rd family (≠ Claude executor), 294k ctx for big diffs. Alt: gpt-5.1
 temperature: 0.1
 permission:
   edit: deny

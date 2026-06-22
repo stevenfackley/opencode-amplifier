@@ -1,6 +1,6 @@
 ---
 description: Audit a screen or diff for Section 508 / WCAG 2.1 AA conformance
-model: lmproxy/gpt-5.1     # <-- strong model; replace with a real ID
+model: gpt-5.1     # strong model for criterion-by-criterion audit
 ---
 
 Audit the target below against the `accessibility-508` skill. Go criterion by criterion and
