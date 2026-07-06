@@ -59,6 +59,17 @@ a rule stated globally but ignored locally is wallpaper.
 - Executor → Sonnet 4.5. Decorrelated reviewer → a cheap model.
 - Mechanical work (commit messages, boilerplate, renames) → cheapest model.
 
+## 10. Deep analysis goes to the council (artifact-only)
+- Analysis-heavy work → reach for a deep command BEFORE attempting inline single-model
+  analysis: design/trade-off call → `/deep-design` · unknown root cause → `/deep-debug` ·
+  high-stakes diff → `/deep-review` · unfamiliar codebase/area → `/deep-read` · any other
+  hard question → `/council`.
+- Workers read; the orchestrator orchestrates. **Never paste raw worker output into the main
+  thread — reference the `.analysis/` artifact path.** The main context holds packets and
+  artifacts only; that is what keeps it rot-free no matter how many calls a task burns.
+- Before any heavy inline read, check `memory/briefs/` for a current brief first (compare its
+  `git_sha` to HEAD; refresh incrementally via `/deep-read` if stale).
+
 ## Project specifics (fill in per repo)
 - Build / test / lint commands: `<...>`
 - Conventions worth repeating: `<naming, error handling, layering>`
