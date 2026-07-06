@@ -1,6 +1,6 @@
 ---
 description: Read-only planner. Turns a task into a numbered, verifiable checklist plan that names which golden pattern each step adapts. Invoke for any non-trivial change.
-mode: subagent
+mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — needed as a default council.mjs worker. `all` keeps it usable as an in-session subagent too.
 model: gpt-5.1          # strong reasoner, non-Claude (decorrelated from the Claude executor). Alt: nemotron-3-ultra-550b-a55b
 temperature: 0.1
 permission:
