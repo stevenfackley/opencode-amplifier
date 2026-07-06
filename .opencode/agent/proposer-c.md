@@ -1,6 +1,6 @@
 ---
 description: Blind council proposer, family C (NVIDIA Nemotron). Produces ONE independent, self-contained proposal or analysis from a context packet — never sees other proposers' output. Used by /deep-design, /deep-debug, /council.
-mode: subagent
+mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent (zero decorrelation). `all` keeps it usable as an in-session subagent too.
 model: nemotron-3-ultra-550b-a55b   # family C — ≠ gpt-5.1, ≠ Mistral. Slow; fallback: nemotron-3-super-120b-a12b (1M ctx)
 temperature: 0.3
 permission:
