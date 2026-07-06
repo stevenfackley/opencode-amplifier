@@ -30,6 +30,15 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 | `/adr <decision>` | A significant architecture decision → write a grounded ADR |
 | `/commit` | Staged changes → Conventional Commit message (doesn't commit) |
 
+### Deep analysis (the council — fresh-context fan-out)
+| Command | Reach for it when… |
+|---|---|
+| `/deep-design <q>` | An architecture/trade-off call you'd want a stronger model for → 3 blind proposals, judge, dissent register |
+| `/deep-debug <symptom>` | Root cause unknown → hypothesis tournament; falsify before fixing |
+| `/deep-review [target]` | A diff that matters → dimension-sharded review, refuter kills weak findings |
+| `/deep-read <area>` | Unfamiliar/large code → durable brief in `memory/briefs/`, incremental refresh |
+| `/council <question>` | Any hard question with no shaped command → generic blind 3-model council |
+
 ### Reviewing others (staff)
 | Command | Reach for it when… |
 |---|---|

@@ -21,13 +21,13 @@ hostile verification, and explicit recovery* — is baked into the structure bel
 | Task ledger | `.opencode/templates/TASK.template.json` | Single source of truth; survives context loss |
 | Skills (native) | `.opencode/skills/` | `brainstorming`, `test-driven-development`, `verification-before-completion`, `creative-naming`, `distinctive-ui-design`, `reviewing-others-code`, `consuming-shared-libraries`, `dotnet-standard-2.0-compat`, `porting-angular-to-mobile`, `accessibility-508` |
 | Agents (per-model) | `.opencode/agent/` | `architect`, `tester`, `reviewer`, `reviewer-cheap`, `debugger`, `designer`, `pr-reviewer` |
-| Commands | `.opencode/command/` | `/plan /spec-tests /verify /consistency /review /debug /pattern /cross-check /evidence /reground /revert-green /name /design /review-pr /explain /pr-description /adr /commit /swift-client /port-from-angular /a11y-review /capture-pattern /setup` |
-| Plugins (hooks) | `.opencode/plugins/` | `tdd-lock`, `compaction`, `escalation`, `guardrails`, `metrics` |
+| Commands | `.opencode/command/` | `/plan /spec-tests /verify /consistency /review /debug /pattern /cross-check /evidence /reground /revert-green /name /design /review-pr /explain /pr-description /adr /commit /swift-client /port-from-angular /a11y-review /capture-pattern /setup /deep-design /deep-debug /deep-review /deep-read /council` |
+| Council layer | `.opencode/agent/` (proposer-b/c, judge, mapper, refuter, synthesizer) + `deep-*` commands | Fresh-context multi-model fan-out; artifacts in `.analysis/`, briefs in `memory/briefs/` |
+| Plugins (hooks) | `.opencode/plugins/` | `tdd-lock`, `compaction`, `escalation`, `guardrails`, `metrics`, `rot-guard` |
 | Cheat sheet | `USAGE.md` | One-line "reach for this when…" for every command/skill/agent, grouped by workflow |
 | Onboarding / team | `ONBOARDING.md`, `CONTRIBUTING.md`, `.opencode/command/setup.md` | Get a teammate amplified in 5 min; how to extend the kit; `/setup` bootstrap |
 | ROI / metrics | `eval/METRICS.md`, `metrics` plugin | Measure kit-vs-baseline on real tasks; the team-adoption + perf-review evidence |
 | Examples / docs | `examples/`, `docs/` | Internal overlay example; contract-pipeline proposal + CI/codegen templates |
-| Plugins (hooks) | `.opencode/plugins/` | `tdd-lock`, `compaction`, `escalation`, `guardrails` |
 | Pattern corpus | `patterns/` + `PATTERNS.md` | Golden examples with fitness metadata; adapt, don't invent |
 | Memory | `memory/MEMORY.md` | Durable cross-session notes (auto-loaded) |
 | Eval harness | `eval/` | Prove the pipeline beats a single model; cut what doesn't earn its keep |
@@ -54,6 +54,27 @@ verification gaming; `/consistency` = catches the "tests green but plan violated
 in research); cross-model `/review` = catches what one model is blind to; commit-per-step +
 `/revert-green` = recover instead of thrash; `escalation` plugin = stop burning a weak model on
 a step it can't do.
+
+## The council layer (deep analysis)
+
+The canonical loop verifies execution; the council layer amplifies *analysis*. Calls through
+the proxy are cheap — context is the scarce resource — so heavy reading/reasoning fans out to
+**fresh-context workers across decorrelated model families** that die after returning a capped
+artifact. The orchestrating session holds artifacts only; rot can't accumulate in a context
+that is thrown away.
+
+| Reach for | When |
+|---|---|
+| `/deep-design <q>` | Architecture/trade-off call — 3 blind proposals, judge-scored, synthesized with a **dissent register** (where models disagree = where the risk lives) |
+| `/deep-debug <symptom>` | Unknown root cause — hypothesis tournament with falsification tests; no fix while ≥2 hypotheses live |
+| `/deep-review [target]` | High-stakes diff — 4 dimension shards + adversarial **refuter** gate; only findings that survive attack reach you |
+| `/deep-read <area>` | Unfamiliar code — 1M-ctx mapper compresses subsystems into a durable, SHA-stamped brief (`memory/briefs/`) |
+| `/council <q>` | Any other hard question — generic blind 3-model poll + synthesis |
+
+Rails: packet in (≤200 lines), artifact out (≤150 lines, `.analysis/`), workers are blind to
+each other, the synthesizer must log dissent instead of averaging it away. Optional parallel
+execution: `tools/council.mjs`. Discipline lives in the `deep-analysis` skill + AGENTS.md
+rule 10.
 
 ## Setup (placeholders are marked)
 1. **Proxy:** edit `opencode.jsonc` → `provider.lmproxy` (`baseURL`, API-key env var, real model

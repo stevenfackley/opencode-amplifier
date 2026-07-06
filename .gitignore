@@ -10,6 +10,9 @@ node_modules/
 .opencode/cache/
 .opencode/logs/
 
+# Council-layer ephemeral analysis artifacts (briefs in memory/briefs/ ARE committed)
+.analysis/
+
 # OS
 .DS_Store
 Thumbs.db
