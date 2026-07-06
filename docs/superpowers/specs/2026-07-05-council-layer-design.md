@@ -78,7 +78,7 @@ Packet + artifact discipline is codified once in a shared skill,
 
 ## Components
 
-### New agents (`.opencode/agent/`, all `mode: subagent`, all read-only)
+### New agents (`.opencode/agent/`, all `mode: subagent`; all read-only except `synthesizer`, which is the single writing agent — it writes the artifact file and nothing else)
 
 | Agent | Model (bare ID) | Role |
 |---|---|---|
