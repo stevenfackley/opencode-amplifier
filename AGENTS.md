@@ -69,6 +69,9 @@ a rule stated globally but ignored locally is wallpaper.
   artifacts only; that is what keeps it rot-free no matter how many calls a task burns.
 - Before any heavy inline read, check `memory/briefs/` for a current brief first (compare its
   `git_sha` to HEAD; refresh incrementally via `/deep-read` if stale).
+- When rot-guard warns mid-task: finish the current step, then `/handoff` → fresh session →
+  `/resume`. Never push a rotted context through an analysis pass — a fresh session reading
+  the handoff beats a bloated session remembering everything.
 
 ## Project specifics (fill in per repo)
 - Build / test / lint commands: `<...>`
