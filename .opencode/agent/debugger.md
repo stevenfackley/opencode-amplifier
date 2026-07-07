@@ -1,6 +1,6 @@
 ---
 description: Disciplined debugger. Enforces a reproduce -> hypothesize -> instrument -> isolate -> fix -> verify protocol so the model can't flail or patch symptoms.
-mode: subagent
+mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
 model: nemotron-3-ultra-550b-a55b   # biggest reasoner (550B), 262k ctx for logs+code. If latency hurts, drop to gpt-5.1
 fallback: gpt-5.1   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.1

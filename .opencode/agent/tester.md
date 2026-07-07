@@ -1,6 +1,6 @@
 ---
 description: Independent test author. Writes spec tests from the PLAN ONLY and must NOT read the implementation. Eliminates verification gaming — tests can't be reverse-engineered to pass buggy code.
-mode: subagent
+mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
 model: gpt-5.1          # MUST differ from the Claude executor. Alt: devstral-small-2-24b-instruct-2512 (coding-tuned)
 fallback: devstral-small-2-24b-instruct-2512   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.1
