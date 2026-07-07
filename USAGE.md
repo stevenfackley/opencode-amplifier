@@ -39,10 +39,18 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 | `/deep-read <area>` | Unfamiliar/large code → durable brief in `memory/briefs/`, incremental refresh |
 | `/council <question>` | Any hard question with no shaped command → generic blind 3-model council |
 
+### Session hygiene (context rot)
+| Command | Reach for it when… |
+|---|---|
+| `/handoff` | rot-guard warned / context is heavy → distill working state to `.analysis/handoff.md`, then restart |
+| `/resume` | First command of the fresh session → staleness-checks the handoff and continues the task |
+
 **Headless fan-out** (`node tools/council.mjs --prompt-file <packet> --workers …`) — hard-won gotchas:
 - `opencode run` **hangs forever if stdin is an open pipe** that never closes. council.mjs pipes the packet over stdin and closes it; if you script `opencode run` yourself, feed the prompt the same way (`opencode run … < packet.md`) — **never as a command-line argument** (truncates at the first newline under a shell, and Windows caps command lines at ~8k chars).
 - `opencode run --agent X` **never hard-fails**: an unknown name or a `mode: subagent` agent silently falls back to the *default* agent (stderr warning, exit 0). Headless workers must be `mode: all` — architect, proposer-b, proposer-c, and mapper ship that way — and council.mjs treats the fallback warning as worker failure so it can't happen silently.
 - `--model <id>` overrides every worker's model — smoke-testing plumbing only; it collapses the council to one family.
+- Workers that die (non-zero exit / timeout) retry ONCE on the `fallback:` model declared in their agent frontmatter; retried artifacts open with a `<!-- degraded: … -->` marker. `--no-retry` disables; `--model` implies it.
+- First run on a new machine: `node tools/doctor.mjs` (static + live checks; `--offline` where the proxy is unreachable). Build packets by script: `node tools/packet.mjs --question "…" --diff origin/main --files "src/*.cs"` — fails loudly past the ~200-line cap instead of truncating.
 
 ### Reviewing others (staff)
 | Command | Reach for it when… |

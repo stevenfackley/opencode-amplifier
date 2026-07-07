@@ -13,8 +13,9 @@ let warned = 0;
 
 const NOTE = (level) =>
   `[rot-guard] Session context is heavy (level ${level}/${WARN_AT.length}). Weak models ` +
-  "degrade in bloated contexts: push further reading into a worker (/deep-read, /deep-review, " +
-  "/council) instead of reading inline, and /reground before the next step.";
+  "degrade in bloated contexts. Protocol: finish the current step, then /handoff -> fresh " +
+  "session -> /resume. Meanwhile push further reading into workers (/deep-read, /council) " +
+  "instead of reading inline.";
 
 export const RotGuard = async ({ client }) => {
   return {

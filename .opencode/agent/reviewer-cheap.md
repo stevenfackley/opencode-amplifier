@@ -1,7 +1,8 @@
 ---
 description: Decorrelated second reviewer on a CHEAP, architecturally-different model. Different training distribution = different blind spots. Used in the /review consensus vote.
-mode: subagent
+mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
 model: nemotron-3-nano-30b-a3b   # cheap, fast, 1M ctx (sees whole repo); NVIDIA family ≠ reviewer's Mistral. Alt: devstral-small-2-24b-instruct-2512
+fallback: devstral-small-2-24b-instruct-2512   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: deny

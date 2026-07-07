@@ -1,7 +1,8 @@
 ---
 description: Primary cross-model reviewer. Reviews the diff against TASK.json AND the real test output (not diff-only). Run after every non-trivial step; pairs with reviewer-cheap in /review.
-mode: subagent
-model: mistral-large-3-675b-instruct-2512   # frontier, 3rd family (≠ Claude executor), 294k ctx for big diffs. Alt: gpt-5.1
+mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
+model: gpt-5.1   # reliable strong reviewer, ≠ Claude executor & ≠ reviewer-cheap's NVIDIA → /review stays cross-family. Family-distinct alt: mistral-small-4-119b-2603 (262k)
+fallback: mistral-small-4-119b-2603   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: deny

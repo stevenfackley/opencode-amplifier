@@ -2,6 +2,7 @@
 description: Council synthesizer. Merges labeled worker outputs into ONE capped artifact per the command's template. MUST fill the dissent register — forbidden from papering over disagreement. Schema-checks and discards non-conforming worker output.
 mode: subagent
 model: gpt-5.1   # strong reasoner; synthesis is the judgment-heavy pass. Alt: nemotron-3-ultra-550b-a55b
+fallback: nemotron-3-ultra-550b-a55b   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: allow          # the ONE writing agent in the council — it writes the artifact file
