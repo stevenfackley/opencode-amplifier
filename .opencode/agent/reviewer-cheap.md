@@ -2,6 +2,7 @@
 description: Decorrelated second reviewer on a CHEAP, architecturally-different model. Different training distribution = different blind spots. Used in the /review consensus vote.
 mode: subagent
 model: nemotron-3-nano-30b-a3b   # cheap, fast, 1M ctx (sees whole repo); NVIDIA family ≠ reviewer's Mistral. Alt: devstral-small-2-24b-instruct-2512
+fallback: devstral-small-2-24b-instruct-2512   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: deny

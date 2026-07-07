@@ -2,6 +2,7 @@
 description: Read-only staff-level reviewer for OTHER people's pull requests. Embodies reviewing-others-code — collaborative, severity-labeled, mentoring. Never edits the code under review.
 mode: all
 model: gpt-5.1     # strong general reviewer. Alt for huge PRs: mistral-large-3-675b-instruct-2512 (294k ctx)
+fallback: mistral-large-3-675b-instruct-2512   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.2
 permission:
   edit: deny              # never modify someone else's branch; bash stays on to fetch diffs / run it
