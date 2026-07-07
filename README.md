@@ -71,12 +71,17 @@ that is thrown away.
 | `/deep-read <area>` | Unfamiliar code — 1M-ctx mapper compresses subsystems into a durable, SHA-stamped brief (`memory/briefs/`) |
 | `/council <q>` | Any other hard question — generic blind 3-model poll + synthesis |
 
-Rails: packet in (≤200 lines), artifact out (≤150 lines, `.analysis/`), workers are blind to
-each other, the synthesizer must log dissent instead of averaging it away. Optional parallel
-execution: `tools/council.mjs`. Discipline lives in the `deep-analysis` skill + AGENTS.md
-rule 10.
+Rails: packet in (≤200 lines, assembled by hand or `tools/packet.mjs`), artifact out (≤150
+lines, `.analysis/`), workers are blind to each other, the synthesizer must log dissent
+instead of averaging it away. Optional parallel execution: `tools/council.mjs` (dead workers
+retry once on their declared `fallback:` model). When rot-guard warns, `/handoff` → fresh
+session → `/resume` continues from a distilled state artifact instead of a bloated context.
+Discipline lives in the `deep-analysis` skill + AGENTS.md rule 10.
 
 ## Setup (placeholders are marked)
+0. **Doctor:** `node tools/doctor.mjs --offline` for static sanity now; run it again WITHOUT
+   `--offline` once the proxy is configured — it round-trips every pinned model and proves
+   headless agent routing before you bet a workday on it.
 1. **Proxy:** edit `opencode.jsonc` → `provider.lmproxy` (`baseURL`, API-key env var, real model
    IDs from `opencode models`).
 2. **Per-agent models:** in `.opencode/agent/*.md`, set `model:` to real IDs. Make `reviewer`
