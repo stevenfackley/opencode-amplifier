@@ -56,7 +56,7 @@ a rule stated globally but ignored locally is wallpaper.
 
 ## 9. Model tiering (cost discipline)
 - Reasoning roles (architect, tester, debugger, primary reviewer) → strong models.
-- Executor → Sonnet 4.5. Decorrelated reviewer → a cheap model.
+- Executor → a coding-tuned mid model (laguna-s / local ornith). Decorrelated reviewer → a cheap local model.
 - Mechanical work (commit messages, boilerplate, renames) → cheapest model.
 
 ## 10. Deep analysis goes to the council (artifact-only)

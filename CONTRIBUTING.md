@@ -3,7 +3,7 @@
 The kit compounds when the team adds to it. Keep additions generic, high-signal, and import-safe.
 
 ## Golden rule: keep it generic and data-free
-Everything here is public + MIT. Never commit employer code, internal names, secrets, or
+Everything here is public + MIT. Never commit private code, private hostnames, secrets, or
 project-specific logic. Patterns/skills must be reusable across any project — that's also what
 keeps the public repo unambiguously yours.
 
@@ -34,7 +34,7 @@ ablation barely moves the numbers, cut it — complexity has a cost (the council
 Branch (`feat/…`), PR, squash-merge. Conventional Commits. No AI-attribution trailers. Update
 `README.md` + `USAGE.md` registries when you add a skill/agent/command.
 
-## Two layers: public kit vs internal overlay
-This repo is the public, generic kit. Real proxy IDs, internal endpoints, and team conventions
-live in a SEPARATE private overlay repo (see `examples/opencode.overlay.example.jsonc`) — never
-here.
+## Two layers: public kit vs personal overlay
+This repo is the public, generic kit. Personal endpoints (your LAN model host), paid model IDs,
+and private conventions live in a SEPARATE overlay (see
+`examples/opencode.overlay.example.jsonc`) — never here.

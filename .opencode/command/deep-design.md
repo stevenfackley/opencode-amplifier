@@ -1,5 +1,5 @@
 ---
-description: Council-grade design — three blind proposals from decorrelated families, judge-scored against a fixed rubric, synthesized with a dissent register. Reach for it on any architecture/trade-off call you'd want a stronger model for.
+description: Council-grade design — three blind proposals from decorrelated families, scored against a fixed rubric by a judge that shares the architect's nemotron-ultra family (so scoring is rubric-anchored, not family-decorrelated), synthesized with a dissent register. Reach for it on any architecture/trade-off call you'd want a stronger model for.
 ---
 
 Follow the `deep-analysis` skill for packet and artifact rules.

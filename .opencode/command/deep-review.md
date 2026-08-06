@@ -7,14 +7,17 @@ Follow the `deep-analysis` skill for packet and artifact rules.
 1. **Target.** $ARGUMENTS names a diff range, PR, or file list; default is the current
    working diff (`git diff` + `git diff --staged`). Build the packet per the skill: target
    contents, TASK.json invariants, brief section for the touched area (staleness-checked).
-2. **Dimension shards — four SEPARATE fresh invocations,** alternating families so each
-   dimension gets decorrelated eyes. Each shard gets the packet + ONLY its charter:
-   - **Correctness** → `@reviewer` — logic, boundaries, null/error paths, broken assumptions
-   - **Security** → `@reviewer-cheap` — injection, authz, secrets, unsafe deserialization,
+2. **Dimension shards — four SEPARATE fresh invocations,** split by what each tier is actually
+   good at, and still two families so the merge sees decorrelated eyes. Security and API misuse
+   ride on pretraining breadth (knowing the CVE shape, the real library contract) → hosted
+   `@reviewer`. Correctness and performance are pattern-checkable against the diff in front of
+   them → local `@reviewer-cheap`. Each shard gets the packet + ONLY its charter:
+   - **Correctness** → `@reviewer-cheap` — logic, boundaries, null/error paths, broken assumptions
+   - **Security** → `@reviewer` — injection, authz, secrets, unsafe deserialization,
      path traversal
-   - **Performance** → `@reviewer` — N+1, quadratic loops on unbounded input, sync-over-async,
-     chatty IO, missing caching where the packet shows a hot path
-   - **API misuse** → `@reviewer-cheap` — wrong/deprecated/hallucinated APIs, misused
+   - **Performance** → `@reviewer-cheap` — N+1, quadratic loops on unbounded input,
+     sync-over-async, chatty IO, missing caching where the packet shows a hot path
+   - **API misuse** → `@reviewer` — wrong/deprecated/hallucinated APIs, misused
      library contracts, version-incompatible calls
    Findings format per shard: `| # | file:line | issue | failure scenario | severity |`,
    cap 40 lines each. One shard = one dimension; off-charter findings are dropped in merge.

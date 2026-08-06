@@ -1,8 +1,8 @@
 ---
 description: Adversarial finding-killer for /deep-review. Attacks every merged review finding and tries to prove it wrong; only findings that survive reach the user. Family-decorrelated from both reviewers.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
-model: mistral-large-3-675b-instruct-2512   # ≠ reviewer (gpt-5.1) and ≠ reviewer-cheap (nemotron-nano) — correlated skepticism is a rubber stamp. Fallback: gpt-oss-120b
-fallback: gpt-oss-120b   # used by tools/council.mjs --retry path; doctor.mjs validates it
+model: openrouter/openai/gpt-oss-20b:free   # ≠ reviewer (NVIDIA) and ≠ reviewer-cheap (Qwen) — correlated skepticism is a rubber stamp
+fallback: openrouter/inclusionai/ling-3.0-tiny:free   # used by tools/council.mjs retry (default; --no-retry disables); doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: deny

@@ -1,6 +1,6 @@
 ---
 description: Analyze an Angular feature and produce a mobile (Swift/MAUI) reproduction spec
-model: gpt-5.1     # reads unfamiliar Angular & extracts exact rules. For apps > 200k tokens use a 1M-ctx model: nemotron-3-super-120b-a12b or llama-4-scout
+model: openrouter/nvidia/nemotron-3-ultra-550b-a55b:free     # reads unfamiliar Angular & extracts exact rules; 1M ctx covers whole apps
 ---
 
 Follow `porting-angular-to-mobile`. Read the Angular source provided (components, services,

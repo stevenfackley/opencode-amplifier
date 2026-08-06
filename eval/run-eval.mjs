@@ -8,7 +8,7 @@
 //
 // Metrics that need a real diff/test harness (churn, pass@1) are stubbed where they depend on
 // your project's test command — fill `TEST_CMD` per repo. Token cost comes from OpenCode's run
-// summary if your version prints it; otherwise wire it to the proxy's usage endpoint.
+// summary if your version prints it; otherwise wire it to your provider's usage endpoint.
 
 import { execFile } from "node:child_process";
 import { readFileSync, readdirSync, writeFileSync, mkdirSync } from "node:fs";
@@ -17,10 +17,10 @@ import { join, basename } from "node:path";
 const TASKS_DIR = join(import.meta.dirname, "tasks");
 const RESULTS_DIR = join(import.meta.dirname, "results");
 
-// --- configs: how each baseline maps to a model/agent set (EDIT to your real proxy IDs) ------
+// --- configs: how each baseline maps to a model/agent set (EDIT to your real model IDs) ------
 const CONFIGS = {
-  B0: { label: "single constrained", args: ["--model", "claude-4-5-sonnet-latest"] },
-  B1: { label: "single strong",      args: ["--model", "gpt-5.1"] },
+  B0: { label: "single constrained", args: ["--model", "openrouter/poolside/laguna-s-2.1:free"] },
+  B1: { label: "single strong",      args: ["--model", "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"] },
   A:  { label: "actor-critic",       args: ["--agent", "build"] }, // executor+reviewer only
   P:  { label: "full pipeline",      args: ["--agent", "build"] }, // relies on this kit's config
 };

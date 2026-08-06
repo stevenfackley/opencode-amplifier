@@ -1,7 +1,7 @@
 # Capability parity: local Claude Code → OpenCode (this kit)
 
 Goal: match — and in places exceed — a heavily-configured local Claude Code setup while driving
-constrained models through the LM proxy. OpenCode is Claude-Code-compatible by design, so most
+free open-weights models. OpenCode is Claude-Code-compatible by design, so most
 of this is *pointing at* existing assets rather than rebuilding them.
 
 | Claude Code capability | OpenCode mechanism | In this kit | Status |
@@ -18,7 +18,7 @@ of this is *pointing at* existing assets rather than rebuilding them.
 | **Per-session single model** | **Per-AGENT model** | planner/executor/reviewer on 3 different models; `/cross-check` ensemble | **Exceeds** |
 | **Output styles** (Explanatory/Learning) | Prompt-level only | encode the style in `AGENTS.md` or an agent prompt | Approx |
 | **Parallel subagents** | Agents + plugin orchestration | `/review` and `/cross-check` fan out | **Parity** |
-| **Reasoning effort** | Provider/model options (if proxy exposes thinking) | enable on reasoning-role agents | Proxy-dependent |
+| **Reasoning effort** | Provider/model options (if the provider exposes thinking) | enable on reasoning-role agents | Provider-dependent |
 
 ## The three places OpenCode + this kit can *beat* local CC
 1. **Per-agent models** → genuine planner≠executor≠reviewer model diversity; CC runs one model
@@ -30,6 +30,6 @@ of this is *pointing at* existing assets rather than rebuilding them.
 
 ## Fastest path to parity on your personal machine
 OpenCode auto-discovers `.claude/skills/`. Point it at your existing superpowers library and it
-"just works" — no porting. This kit ships *original, generic* skills so the **work** environment
+"just works" — no porting. This kit ships *original, generic* skills so any environment
 (where your personal `.claude/` won't exist) is self-sufficient and the public repo stays
 unambiguously yours.

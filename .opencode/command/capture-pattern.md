@@ -9,7 +9,7 @@ the next weak-model run) adapts it instead of reinventing it.
 2. Fill the fitness frontmatter — `applicability`, `forbidden_contexts`, and `failure_modes`
    matter most (they're what make retrieval pick by FIT).
 3. Write the README header: when to use / key decisions (the *why*) / gotchas.
-4. Add a MINIMAL, generic, self-contained code example — strip ALL project/employer specifics.
+4. Add a MINIMAL, generic, self-contained code example — strip ALL project-specific/private details.
 5. Add a row to `PATTERNS.md`.
 
 Only capture something that was non-obvious and will recur. One idea per pattern. Keep it generic

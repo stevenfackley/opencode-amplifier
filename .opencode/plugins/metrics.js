@@ -3,7 +3,7 @@
 // so you can measure turns-per-task, verify loops, tool mix, and adoption across the team.
 //
 // Privacy: sends event KINDS + tool names + project path only — no file contents or prompts.
-// Point it ONLY at a local/internal collector. Hook arg shapes vary by version; written defensively.
+// Point it ONLY at a local collector. Hook arg shapes vary by version; written defensively.
 
 const ENDPOINT = process.env.METRICS_ENDPOINT; // e.g. http://127.0.0.1:7878/opencode
 

@@ -1,8 +1,8 @@
 ---
 description: Read-only planner. Turns a task into a numbered, verifiable checklist plan that names which golden pattern each step adapts. Invoke for any non-trivial change.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — needed as a default council.mjs worker. `all` keeps it usable as an in-session subagent too.
-model: gpt-5.1          # strong reasoner, non-Claude (decorrelated from the Claude executor). Alt: nemotron-3-ultra-550b-a55b
-fallback: nemotron-3-ultra-550b-a55b   # used by tools/council.mjs --retry path; doctor.mjs validates it
+model: openrouter/nvidia/nemotron-3-ultra-550b-a55b:free   # strongest free reasoner (1M ctx), ≠ poolside executor
+fallback: openrouter/nvidia/nemotron-3-super-120b-a12b:free   # used by tools/council.mjs retry (default; --no-retry disables); doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: deny

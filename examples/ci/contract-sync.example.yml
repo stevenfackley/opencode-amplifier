@@ -23,7 +23,7 @@ jobs:
       # 1. Fetch the published contract (skip if you commit the spec manually).
       - name: Fetch OpenAPI spec
         run: |
-          curl -fsSL "<INTERNAL_OPENAPI_URL>" -o openapi/spec.yaml
+          curl -fsSL "<YOUR_OPENAPI_URL>" -o openapi/spec.yaml
         # Add auth header / OIDC as your environment requires.
 
       # 2. Regenerate the Swift client from the spec.

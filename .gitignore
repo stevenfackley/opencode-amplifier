@@ -1,4 +1,4 @@
-# Secrets — never commit proxy keys
+# Secrets — never commit API keys
 .env
 .env.*
 *.key

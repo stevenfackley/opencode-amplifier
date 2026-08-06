@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 // doctor.mjs — first-run kit verifier. Run from the repo root BEFORE any real work on a new
-// machine, after a proxy change, or after an OpenCode upgrade:
+// machine, after a provider change, or after an OpenCode upgrade:
 //
 //   node tools/doctor.mjs [--offline]
 //
 // Static checks always run (file/config sanity, agent mode policy). Live checks call the
-// configured provider — one tiny round-trip per unique pinned model — and are skipped with
-// --offline (use at home where the work proxy is unreachable).
+// configured provider — one tiny round-trip per unique pinned model, agent primaries AND
+// `.opencode/command/*.md` frontmatter pins — and are skipped with --offline (use where the
+// provider is unreachable or you have no API key).
 //
 // Exit codes: 0 = all PASS/WARN, 1 = at least one FAIL, 2 = usage error.
 // Conventions (shared with council.mjs): spawned `opencode` never inherits stdin (an open
@@ -56,6 +57,16 @@ for (const a of agents) {
   if (!a.mode || !a.model) record("FAIL", `agent ${a.name}: mode+model present`, `mode=${a.mode} model=${a.model}`);
 }
 
+// Commands may pin their own model in frontmatter; those pins get the same catalog + round-trip
+// proof as agent primaries, so "every pinned model is verified" stays literally true.
+let commandPins = [];
+try {
+  commandPins = readAgents(".opencode/command").filter((c) => c.model);
+  record("PASS", "command model pins parse", `${commandPins.length} pinned: ${commandPins.map((c) => c.name).join(", ")}`);
+} catch (e) {
+  record("FAIL", "command model pins parse", e.message);
+}
+
 const synth = agents.find((a) => a.name === "synthesizer");
 if (synth && synth.mode === "subagent" && synth.editAllow) record("PASS", "synthesizer: subagent + edit:allow");
 else record("FAIL", "synthesizer: subagent + edit:allow", `mode=${synth?.mode} editAllow=${synth?.editAllow}`);
@@ -83,11 +94,20 @@ record(existsSync("memory/briefs") ? "PASS" : "FAIL", "memory/briefs/ exists");
 
 try {
   const jsonc = readFileSync("opencode.jsonc", "utf8");
-  if (/PROXY_HOST|YOUR-|changeme/i.test(jsonc)) record("WARN", "opencode.jsonc provider configured", "placeholder marker found — fine at home, fix before real use");
-  else record("PASS", "opencode.jsonc provider configured");
+  // Catches only LIVE placeholders: PROXY_HOST/changeme anywhere, or a YOUR_*/YOUR-* command or
+  // url inside an mcp block that is "enabled": true. A disabled example block never warns.
+  const hits = [];
+  if (/PROXY_HOST|changeme/i.test(jsonc)) hits.push("PROXY_HOST/changeme in opencode.jsonc");
+  for (const [block, name] of jsonc.matchAll(/"([\w-]+)"\s*:\s*\{[^{}]*\}/g)) {
+    if (/"enabled"\s*:\s*true/.test(block) && /"(command|url)"\s*:[^\n]*YOUR[-_]/i.test(block)) hits.push(`mcp ${name} enabled with a placeholder`);
+  }
+  if (hits.length) record("WARN", "no unfilled overlay placeholders", `${hits.join("; ")} — fill it before real use`);
+  else record("PASS", "no unfilled overlay placeholders");
 } catch (e) {
   record("FAIL", "opencode.jsonc readable", e.message);
 }
+
+record(process.env.OPENROUTER_API_KEY ? "PASS" : "WARN", "OPENROUTER_API_KEY set", process.env.OPENROUTER_API_KEY ? "" : "openrouter/* pins will 401 on live checks");
 
 // ---------- live checks ----------
 
@@ -97,17 +117,50 @@ if (offline) {
   const list = oc(["models"], { timeout: 60_000 });
   const catalog = list.stdout || "";
   if (list.status !== 0) record("FAIL", "opencode models", (list.stderr || "").trim().slice(0, 200));
-  const primaries = [...new Set(agents.map((a) => a.model).filter(Boolean))];
+  // One deduped set: agent primaries + command frontmatter pins + the root "model" key from
+  // opencode.jsonc (the default executor — pinned by no frontmatter, still must resolve). Rows
+  // carry the command source so a command-only pin is distinguishable from an agent's.
+  const rootModel = (readFileSync("opencode.jsonc", "utf8").match(/^\s*"model":\s*"([^"]+)"/m) || [])[1];
+  const primaries = [...new Set([...agents, ...commandPins].map((a) => a.model).concat(rootModel ? [rootModel] : []).filter(Boolean))];
   const fallbackModels = [...new Set(agents.map((a) => a.fallback).filter(Boolean))];
-  for (const m of primaries) record(catalog.includes(m) ? "PASS" : "FAIL", `model in catalog: ${m}`);
+  const label = (m) => {
+    const cmds = commandPins.filter((c) => c.model === m).map((c) => `command:${c.name}`);
+    return cmds.length ? `${m} (${cmds.join(", ")})` : m;
+  };
+  for (const m of primaries) record(catalog.includes(m) ? "PASS" : "FAIL", `model in catalog: ${label(m)}`);
   for (const m of fallbackModels) {
     if (!primaries.includes(m)) record(catalog.includes(m) ? "PASS" : "WARN", `fallback in catalog: ${m}`, catalog.includes(m) ? "" : "declared fallback unavailable — retries will fail");
   }
 
+  // Local thinking models (qwen3.5 etc.) get an UNBOUNDED token budget through `opencode run`
+  // and can reason past any sane timeout on small hardware. For ollama/* we therefore prove the
+  // endpoint serves a real, bounded completion via direct HTTP (cold load still allowed 300s);
+  // OpenCode's own routing is proven separately by the --agent probe below.
+  // localhost → 127.0.0.1: Node's fetch resolves localhost to ::1 first, but Ollama bound to
+  // 0.0.0.0 listens on IPv4 only — the probe would miss a perfectly healthy server.
+  const ollamaBase = (
+    (readFileSync("opencode.jsonc", "utf8").match(/"baseURL":\s*"(http:\/\/[^"]+)"/) || [])[1] ||
+    "http://localhost:11434/v1"
+  ).replace("//localhost", "//127.0.0.1");
   for (const m of primaries) {
+    if (m.startsWith("ollama/")) {
+      try {
+        const res = await fetch(`${ollamaBase}/chat/completions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: m.slice(7), messages: [{ role: "user", content: "Say OK" }], max_tokens: 30 }),
+          signal: AbortSignal.timeout(300_000),
+        });
+        const j = await res.json().catch(() => null);
+        record(res.ok && j?.choices ? "PASS" : "FAIL", `round-trip: ${label(m)}`, res.ok ? "" : `HTTP ${res.status}`);
+      } catch (e) {
+        record("FAIL", `round-trip: ${label(m)}`, String(e.message || e).slice(0, 120));
+      }
+      continue;
+    }
     const r = oc(["run", "-m", m], { input: "Reply with exactly: OK", timeout: 90_000 });
-    if (r.status === 0 && /OK/.test(r.stdout || "")) record("PASS", `round-trip: ${m}`);
-    else record("FAIL", `round-trip: ${m}`, r.status === null ? "timeout" : (r.stderr || r.stdout || "").trim().slice(0, 200));
+    if (r.status === 0 && /OK/.test(r.stdout || "")) record("PASS", `round-trip: ${label(m)}`);
+    else record("FAIL", `round-trip: ${label(m)}`, r.status === null ? "timeout" : (r.stderr || r.stdout || "").trim().slice(0, 200));
   }
 
   const probe = oc(["run", "--agent", "architect"], { input: "Reply with exactly: OK", timeout: 120_000 });

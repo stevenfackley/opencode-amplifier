@@ -1,8 +1,8 @@
 ---
-description: Blind council proposer, family C (NVIDIA Nemotron). Produces ONE independent, self-contained proposal or analysis from a context packet — never sees other proposers' output. Used by /deep-design, /deep-debug, /council.
+description: Blind council proposer, family C (Google Gemma). Produces ONE independent, self-contained proposal or analysis from a context packet — never sees other proposers' output. Used by /deep-design, /deep-debug, /council.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent (zero decorrelation). `all` keeps it usable as an in-session subagent too.
-model: nemotron-3-ultra-550b-a55b   # family C — ≠ gpt-5.1, ≠ Mistral. Slow; fallback: nemotron-3-super-120b-a12b (1M ctx)
-fallback: nemotron-3-super-120b-a12b   # used by tools/council.mjs --retry path; doctor.mjs validates it
+model: openrouter/google/gemma-4-26b-a4b-it:free   # family C — ≠ NVIDIA, ≠ inclusionAI
+fallback: openrouter/google/gemma-4-31b-it:free   # bigger sibling, same family; used by tools/council.mjs retry (default; --no-retry disables); doctor.mjs validates it
 temperature: 0.3
 permission:
   edit: deny

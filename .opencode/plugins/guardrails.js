@@ -1,6 +1,6 @@
 // guardrails — basic safety hooks.
 //  1. Block reads of secret files (.env, *.key, credentials, *.pem) so secrets never enter the
-//     model context — important on a corp proxy where context may be logged.
+//     model context — important on any hosted endpoint where context may be logged.
 //  2. Notify on session idle (place to wire your own dashboard POST, like a local activity
 //     visualizer — see commented stub).
 //

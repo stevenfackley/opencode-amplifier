@@ -50,7 +50,7 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 - `opencode run --agent X` **never hard-fails**: an unknown name or a `mode: subagent` agent silently falls back to the *default* agent (stderr warning, exit 0). Headless workers must be `mode: all` — architect, proposer-b, proposer-c, and mapper ship that way — and council.mjs treats the fallback warning as worker failure so it can't happen silently.
 - `--model <id>` overrides every worker's model — smoke-testing plumbing only; it collapses the council to one family.
 - Workers that die (non-zero exit / timeout) retry ONCE on the `fallback:` model declared in their agent frontmatter; retried artifacts open with a `<!-- degraded: … -->` marker. `--no-retry` disables; `--model` implies it.
-- First run on a new machine: `node tools/doctor.mjs` (static + live checks; `--offline` where the proxy is unreachable). Build packets by script: `node tools/packet.mjs --question "…" --diff origin/main --files "src/*.cs"` — fails loudly past the ~200-line cap instead of truncating.
+- First run on a new machine: `node tools/doctor.mjs` (static + live checks; `--offline` where the provider endpoints are unreachable). Build packets by script: `node tools/packet.mjs --question "…" --diff origin/main --files "src/*.cs"` — fails loudly past the ~200-line cap instead of truncating.
 
 ### Reviewing others (staff)
 | Command | Reach for it when… |

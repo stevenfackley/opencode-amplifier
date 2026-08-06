@@ -1,8 +1,8 @@
 ---
-description: Blind council proposer, family B (Mistral). Produces ONE independent, self-contained proposal or analysis from a context packet — never sees other proposers' output. Used by /deep-design, /deep-debug, /council.
+description: Blind council proposer, family B (poolside Laguna). Produces ONE independent, self-contained proposal or analysis from a context packet — never sees other proposers' output. Used by /deep-design, /deep-debug, /council.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent (zero decorrelation). `all` keeps it usable as an in-session subagent too.
-model: mistral-large-3-675b-instruct-2512   # family B — ≠ gpt-5.1 (architect/judge), ≠ nemotron (proposer-c). Fallback: mistral-small-4-119b-2603
-fallback: mistral-small-4-119b-2603   # used by tools/council.mjs --retry path; doctor.mjs validates it
+model: openrouter/poolside/laguna-s-2.1:free   # family B (poolside) — ≠ NVIDIA (judge), ≠ Google (proposer-c)
+fallback: openrouter/inclusionai/ling-3.0-tiny:free   # family-diverse retry; used by tools/council.mjs retry (default; --no-retry disables); doctor.mjs validates it
 temperature: 0.3
 permission:
   edit: deny
