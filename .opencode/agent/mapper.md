@@ -1,8 +1,8 @@
 ---
 description: Subsystem mapper for /deep-read. Digests a whole subsystem (1M context — it IS the compressor) into a capped brief section. The only agent allowed to take large raw-code dumps as input.
 mode: all   # `all`, not `subagent`: /deep-read fan-out via council.mjs (`--workers mapper`) runs headless, and headless `--agent` only accepts primaries.
-model: llama-4-scout   # 1M ctx, cheap — built for whole-subsystem reads. Fallback: nemotron-3-super-120b-a12b (1M)
-fallback: nemotron-3-super-120b-a12b   # used by tools/council.mjs --retry path; doctor.mjs validates it
+model: openrouter/nvidia/nemotron-3-ultra-550b-a55b:free   # the ONLY free 1M-ctx model — built for whole-subsystem reads
+fallback: openrouter/nvidia/nemotron-3-super-120b-a12b:free   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: deny

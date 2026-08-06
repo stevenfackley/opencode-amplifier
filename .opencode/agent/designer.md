@@ -1,7 +1,8 @@
 ---
 description: UI designer/builder. Commits to a bold aesthetic direction and implements production-grade, non-generic interfaces. Embodies the distinctive-ui-design skill. Use for any UI work where "looks generic" is the failure to avoid.
 mode: all
-model: claude-4-5-sonnet-latest   # best UI/code taste available to you
+model: openrouter/google/gemma-4-31b-it:free   # multimodal (sees screenshots) + best free UI taste
+fallback: openrouter/inclusionai/ling-3.0-flash:free   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.7                    # higher than other agents — UI work needs creative range
 ---
 

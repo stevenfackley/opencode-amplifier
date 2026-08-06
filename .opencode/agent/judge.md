@@ -1,8 +1,8 @@
 ---
 description: Council judge. Scores blind proposals against the invoking command's fixed rubric. Never authors its own design — scoring only. Used by /deep-design.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
-model: gpt-5.1   # strong reasoner; judging needs calibration more than creativity. Alt: nemotron-3-ultra-550b-a55b
-fallback: nemotron-3-ultra-550b-a55b   # used by tools/council.mjs --retry path; doctor.mjs validates it
+model: openrouter/nvidia/nemotron-3-ultra-550b-a55b:free   # judging needs calibration more than creativity
+fallback: openrouter/nvidia/nemotron-3-super-120b-a12b:free   # used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: deny
