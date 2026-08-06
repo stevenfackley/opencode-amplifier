@@ -17,4 +17,4 @@ One line per memory. Keep it short; put detail in the linked file under `memory/
 
 ## Index
 <!-- - [Short title](memory/some-note.md) — one-line hook -->
-_(empty — add entries as you learn things worth keeping)_
+- [Free-model retarget](memory/2026-08-05-free-model-retarget.md) — :free roster churns; doctor-live catches it; rate caps; reviewer decorrelation invariant; macOS TCC/launchd gotcha

@@ -106,6 +106,19 @@ Keep the path as `/opt/homebrew/opt/ollama/bin/ollama` (not `/opt/homebrew/Cella
 `opt` path is a symlink Homebrew re-points on upgrade, so `brew upgrade ollama` won't break the
 plist.
 
+**TCC gotcha (external volumes only, field-verified):** macOS privacy controls block
+launchd-spawned processes from external volumes — the agent starts, binds the port, then wedges
+forever inside `mkdir` with nothing in the log. The same commands work over SSH (SSH sessions
+inherit sshd's disk grant), which makes this maddening to debug. Fix: System Settings → Privacy
+& Security → **Full Disk Access** → add `/opt/homebrew/opt/ollama/bin/ollama`. Re-check the
+grant after `brew upgrade ollama` — the binary is ad-hoc-signed and can lose its TCC entry.
+Serving from the boot drive needs none of this.
+
+Two more field notes: `brew services restart ollama` regenerates Homebrew's own plist and
+silently resets `OLLAMA_HOST` to `127.0.0.1` — exactly why this guide uses a dedicated
+LaunchAgent instead of `brew services`. And `diskutil eraseDisk` over plain SSH can hang
+silently waiting for authorization; run it with `ssh -tt` (or at the machine).
+
 ## 4. LAN exposure + addressing
 
 By default Ollama binds `127.0.0.1` and is unreachable from other machines. `OLLAMA_HOST=0.0.0.0:11434`
