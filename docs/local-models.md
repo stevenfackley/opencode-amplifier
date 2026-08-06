@@ -112,7 +112,11 @@ forever inside `mkdir` with nothing in the log. The same commands work over SSH 
 inherit sshd's disk grant), which makes this maddening to debug. Fix: System Settings → Privacy
 & Security → **Full Disk Access** → add `/opt/homebrew/opt/ollama/bin/ollama`. Re-check the
 grant after `brew upgrade ollama` — the binary is ad-hoc-signed and can lose its TCC entry.
-Serving from the boot drive needs none of this.
+Serving from the boot drive needs none of this. Restart the server after granting — a
+running instance doesn't pick the grant up. One aftershock: blob partials written *before*
+the grant can poison resume *after* it — `ollama pull` dies instantly with `Error: EOF` at
+the manifest step and nothing in the server log, even with `OLLAMA_DEBUG=1`. Fix:
+`rm $OLLAMA_MODELS/blobs/*-partial*` and re-pull.
 
 Two more field notes: `brew services restart ollama` regenerates Homebrew's own plist and
 silently resets `OLLAMA_HOST` to `127.0.0.1` — exactly why this guide uses a dedicated
