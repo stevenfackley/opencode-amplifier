@@ -1,17 +1,17 @@
 # opencode-amplifier
 
 A portable, **contract-governed** OpenCode configuration that gets near-frontier results out of
-constrained models (Sonnet 4.5, Sonnet 3.7, GPT-5.1, and cheaper corp-hosted models) by moving
+free, open-weights models (local Ollama models + OpenRouter's `:free` tier) by moving
 *reasoning* out of the model and into artifacts the system can **check**: a task ledger, locked
 tests, golden examples, plan↔artifact checks, cross-model review, and an eval harness.
 
 > **Core thesis.** A weak model's ceiling ≈ *(what's in its context)* + *(how small each step
-> is)*. You don't make Sonnet smarter — you remove the need for it to be smart, and you replace
+> is)*. You don't make the model smarter — you remove the need for it to be smart, and you replace
 > "the model promises to behave" with "the system verifies it did."
 
-This design was pressure-tested by a 5-model council (GPT-5.4, Sonnet 4.6, Gemini 3.1 Pro, Kimi
-K2.6). Their core verdict — *be contract-governed, not prompt-governed; add durable state,
-hostile verification, and explicit recovery* — is baked into the structure below.
+This design was pressure-tested by a 5-model council of frontier models. Their core verdict —
+*be contract-governed, not prompt-governed; add durable state, hostile verification, and
+explicit recovery* — is baked into the structure below.
 
 ## What's in the box
 
@@ -27,12 +27,12 @@ hostile verification, and explicit recovery* — is baked into the structure bel
 | Cheat sheet | `USAGE.md` | One-line "reach for this when…" for every command/skill/agent, grouped by workflow |
 | Onboarding / team | `ONBOARDING.md`, `CONTRIBUTING.md`, `.opencode/command/setup.md` | Get a teammate amplified in 5 min; how to extend the kit; `/setup` bootstrap |
 | ROI / metrics | `eval/METRICS.md`, `metrics` plugin | Measure kit-vs-baseline on real tasks; the team-adoption + perf-review evidence |
-| Examples / docs | `examples/`, `docs/` | Internal overlay example; contract-pipeline proposal + CI/codegen templates |
+| Examples / docs | `examples/`, `docs/` | Personal-overlay example; contract-pipeline proposal + CI/codegen templates |
 | Pattern corpus | `patterns/` + `PATTERNS.md` | Golden examples with fitness metadata; adapt, don't invent |
 | Memory | `memory/MEMORY.md` | Durable cross-session notes (auto-loaded) |
 | Eval harness | `eval/` | Prove the pipeline beats a single model; cut what doesn't earn its keep |
 | Parity map | `CAPABILITY-PARITY.md` | How this matches/exceeds a local Claude Code setup |
-| Config | `opencode.jsonc` | Proxy provider, instructions, MCP servers |
+| Config | `opencode.jsonc` | Providers (ollama + openrouter), instructions, MCP servers |
 
 ## The canonical workflow (one hardened loop)
 
@@ -41,7 +41,7 @@ hostile verification, and explicit recovery* — is baked into the structure bel
                       forbidden files, steps, acceptance tests) + Approach brief
 /spec-tests           tester (different model, never sees impl) writes FAILING spec tests
 export TDD_LOCK_TESTS=1                # tests are now a locked contract
-<do step 1>           Build agent (Sonnet 4.5) implements ONE step, updates TASK.json
+<do step 1>           Build agent (executor model) implements ONE step, updates TASK.json
 /verify               run full suite, fix until green
 /consistency          confirm the PLAN was satisfied, not just the tests
 /review               reviewer + reviewer-cheap (two models) -> consensus findings
@@ -57,10 +57,10 @@ a step it can't do.
 
 ## The council layer (deep analysis)
 
-The canonical loop verifies execution; the council layer amplifies *analysis*. Calls through
-the proxy are cheap — context is the scarce resource — so heavy reading/reasoning fans out to
-**fresh-context workers across decorrelated model families** that die after returning a capped
-artifact. The orchestrating session holds artifacts only; rot can't accumulate in a context
+The canonical loop verifies execution; the council layer amplifies *analysis*. Model calls cost
+nothing — context (and the daily free-tier request pool) is the scarce resource — so heavy
+reading/reasoning fans out to **fresh-context workers across decorrelated model families** that
+die after returning a capped artifact. The orchestrating session holds artifacts only; rot can't accumulate in a context
 that is thrown away.
 
 | Reach for | When |
@@ -78,30 +78,38 @@ retry once on their declared `fallback:` model). When rot-guard warns, `/handoff
 session → `/resume` continues from a distilled state artifact instead of a bloated context.
 Discipline lives in the `deep-analysis` skill + AGENTS.md rule 10.
 
-## Setup (placeholders are marked)
+## Setup (one free API key + one install, five minutes)
 0. **Doctor:** `node tools/doctor.mjs --offline` for static sanity now; run it again WITHOUT
-   `--offline` once the proxy is configured — it round-trips every pinned model and proves
+   `--offline` once your key is set — it round-trips every pinned model and proves
    headless agent routing before you bet a workday on it.
-1. **Proxy:** edit `opencode.jsonc` → `provider.lmproxy` (`baseURL`, API-key env var, real model
-   IDs from `opencode models`).
-2. **Per-agent models:** in `.opencode/agent/*.md`, set `model:` to real IDs. Make `reviewer`
-   and `tester` *different families* from the executor — decorrelation is the point.
+1. **OpenRouter:** create a free key at openrouter.ai/keys, `export OPENROUTER_API_KEY=…`.
+   Free tier = 50 req/day (20/min); a one-time $10 credit purchase unlocks 1,000/day — worth it.
+2. **Ollama (local tier):** install from ollama.com, then
+   `ollama pull qwen3.5:9b && ollama pull ornith:9b && ollama pull qwen3.5:4b`
+   (~16GB total, fits 16GB unified RAM).
+   Hosting on a separate LAN box instead? See `docs/local-models.md` + `examples/`.
 3. **Drop it in:** copy `.opencode/`, `AGENTS.md`, `PATTERNS.md`, `patterns/`, `memory/`, and the
-   relevant `opencode.jsonc` bits into a work project, or merge into `~/.config/opencode/`.
+   relevant `opencode.jsonc` bits into your project, or merge into `~/.config/opencode/`.
    (Verify singular/plural dir names — `agent/` vs `agents/` — for your OpenCode version.)
 4. **Test the lock:** `export TDD_LOCK_TESTS=1` and confirm the executor can't edit a `*.test.*`
    file.
 
-## Model tiering (preserve premium quota)
-Models referenced by **bare ID** (no provider prefix). Defaults wired across 4 families so the
-`/review` consensus vote has uncorrelated blind spots:
-| Tier | Models (bare IDs) | Use for |
+## Model tiering (free tier, preserved quota)
+Models are provider-prefixed (`ollama/…` local, `openrouter/…:free` hosted). Chatty roles run
+local (no rate limits); bursty council roles spend the 1,000/day OpenRouter pool. Defaults wired
+across 5+ families so the `/review` consensus vote has uncorrelated blind spots:
+| Tier | Models | Use for |
 |---|---|---|
-| Reasoning | `gpt-5.1`, `nemotron-3-ultra-550b-a55b`, `mistral-large-3-675b-instruct-2512` | architect, tester, debugger, reviewer |
-| Executor | `claude-4-5-sonnet-latest` | the Build agent, step edits, designer |
-| Decorrelated review | `nemotron-3-nano-30b-a3b` (1M ctx) | reviewer-cheap (different blind spots) |
-| Mechanical | `devstral-small-2-24b-instruct-2512`, `gemma-4-31b-it` | commit messages, boilerplate, renames |
-| Huge context | `llama-4-scout`, `nemotron-3-super-120b-a12b` (1M) | reading whole Angular apps for `/port-from-angular` |
+| Reasoning | `openrouter/nvidia/nemotron-3-ultra-550b-a55b:free` (1M ctx) | architect, debugger, judge, mapper |
+| Executor | `openrouter/poolside/laguna-s-2.1:free` (manual swap to `ollama/ornith:9b` when rate-limited) | the Build agent, step edits |
+| Cross-family review | `openrouter/nvidia/nemotron-3-super-120b-a12b:free`, `openrouter/cohere/north-mini-code:free` | reviewer, tester |
+| Decorrelated review | `ollama/qwen3.5:9b` (local, $0) | reviewer-cheap (different blind spots) |
+| Council diversity | `openrouter/inclusionai/ling-3.0-flash:free`, `openrouter/google/gemma-4-31b-it:free`, `openrouter/openai/gpt-oss-20b:free` | proposers, refuter, designer |
+| Mechanical | `ollama/qwen3.5:4b` | commit messages, boilerplate, renames |
+
+⚠️ The `:free` roster churns monthly. `node tools/doctor.mjs` (live, no `--offline`) catches
+delisted slugs; swap in a live `:free` model or a pennies-tier one (see `opencode.jsonc`
+comments).
 
 ## Claude Code parity
 OpenCode is Claude-Code-compatible: it auto-discovers `.claude/skills/` and falls back to
@@ -121,6 +129,6 @@ ablations across greenfield/brownfield/bugfix tasks. If a component's ablation d
 it. See `eval/README.md`.
 
 ## What this does NOT do
-It moves no sensitive/weapons data anywhere and bypasses no data rule. It brings *generic public
-reference material in* and *structures + verifies the workflow* — every model call still runs
-through the approved proxy on approved data.
+It moves no sensitive data anywhere and bypasses no data rule. It brings *generic public
+reference material in* and *structures + verifies the workflow* — every model call runs through
+providers you chose, on endpoints you control.
