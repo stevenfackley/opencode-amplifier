@@ -132,7 +132,32 @@ if (offline) {
     if (!primaries.includes(m)) record(catalog.includes(m) ? "PASS" : "WARN", `fallback in catalog: ${m}`, catalog.includes(m) ? "" : "declared fallback unavailable — retries will fail");
   }
 
+  // Local thinking models (qwen3.5 etc.) get an UNBOUNDED token budget through `opencode run`
+  // and can reason past any sane timeout on small hardware. For ollama/* we therefore prove the
+  // endpoint serves a real, bounded completion via direct HTTP (cold load still allowed 300s);
+  // OpenCode's own routing is proven separately by the --agent probe below.
+  // localhost → 127.0.0.1: Node's fetch resolves localhost to ::1 first, but Ollama bound to
+  // 0.0.0.0 listens on IPv4 only — the probe would miss a perfectly healthy server.
+  const ollamaBase = (
+    (readFileSync("opencode.jsonc", "utf8").match(/"baseURL":\s*"(http:\/\/[^"]+)"/) || [])[1] ||
+    "http://localhost:11434/v1"
+  ).replace("//localhost", "//127.0.0.1");
   for (const m of primaries) {
+    if (m.startsWith("ollama/")) {
+      try {
+        const res = await fetch(`${ollamaBase}/chat/completions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: m.slice(7), messages: [{ role: "user", content: "Say OK" }], max_tokens: 30 }),
+          signal: AbortSignal.timeout(300_000),
+        });
+        const j = await res.json().catch(() => null);
+        record(res.ok && j?.choices ? "PASS" : "FAIL", `round-trip: ${label(m)}`, res.ok ? "" : `HTTP ${res.status}`);
+      } catch (e) {
+        record("FAIL", `round-trip: ${label(m)}`, String(e.message || e).slice(0, 120));
+      }
+      continue;
+    }
     const r = oc(["run", "-m", m], { input: "Reply with exactly: OK", timeout: 90_000 });
     if (r.status === 0 && /OK/.test(r.stdout || "")) record("PASS", `round-trip: ${label(m)}`);
     else record("FAIL", `round-trip: ${label(m)}`, r.status === null ? "timeout" : (r.stderr || r.stdout || "").trim().slice(0, 200));
