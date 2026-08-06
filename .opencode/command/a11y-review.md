@@ -1,6 +1,6 @@
 ---
 description: Audit a screen or diff for Section 508 / WCAG 2.1 AA conformance
-model: openrouter/google/gemma-4-31b-it:free     # criterion-by-criterion audit; multimodal helps with UI evidence
+model: openrouter/google/gemma-4-26b-a4b-it:free     # criterion-by-criterion audit; multimodal helps with UI evidence
 ---
 
 Audit the target below against the `accessibility-508` skill. Go criterion by criterion and

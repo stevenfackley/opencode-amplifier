@@ -1,6 +1,6 @@
 ---
 description: Generate distinctive product/app/company names (creative-naming) with rationale + availability
-model: openrouter/google/gemma-4-31b-it:free     # creative range across naming techniques
+model: openrouter/google/gemma-4-26b-a4b-it:free     # creative range across naming techniques
 ---
 
 Follow the `creative-naming` skill. From the concept below: extract the essence, generate 15–20

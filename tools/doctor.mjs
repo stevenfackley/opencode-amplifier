@@ -117,9 +117,11 @@ if (offline) {
   const list = oc(["models"], { timeout: 60_000 });
   const catalog = list.stdout || "";
   if (list.status !== 0) record("FAIL", "opencode models", (list.stderr || "").trim().slice(0, 200));
-  // One deduped set: agent primaries + command frontmatter pins. Rows carry the command source
-  // so a command-only pin (e.g. /commit's mechanical model) is distinguishable from an agent's.
-  const primaries = [...new Set([...agents, ...commandPins].map((a) => a.model).filter(Boolean))];
+  // One deduped set: agent primaries + command frontmatter pins + the root "model" key from
+  // opencode.jsonc (the default executor — pinned by no frontmatter, still must resolve). Rows
+  // carry the command source so a command-only pin is distinguishable from an agent's.
+  const rootModel = (readFileSync("opencode.jsonc", "utf8").match(/^\s*"model":\s*"([^"]+)"/m) || [])[1];
+  const primaries = [...new Set([...agents, ...commandPins].map((a) => a.model).concat(rootModel ? [rootModel] : []).filter(Boolean))];
   const fallbackModels = [...new Set(agents.map((a) => a.fallback).filter(Boolean))];
   const label = (m) => {
     const cmds = commandPins.filter((c) => c.model === m).map((c) => `command:${c.name}`);

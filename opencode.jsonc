@@ -47,8 +47,8 @@
         "nvidia/nemotron-3-super-120b-a12b:free":  { "name": "Nemotron 3 Super 120B — reviewer/synthesizer (262k)" },
         "poolside/laguna-s-2.1:free":              { "name": "Laguna-S 2.1 118B — coding agent, executor (262k)" },
         "cohere/north-mini-code:free":             { "name": "North Mini Code 30B — tester (256k)" },
-        "google/gemma-4-31b-it:free":              { "name": "Gemma 4 31B — designer/pr-review, multimodal (262k)" },
-        "google/gemma-4-26b-a4b-it:free":          { "name": "Gemma 4 26B MoE — fast fallback (262k)" },
+        "google/gemma-4-31b-it:free":              { "name": "Gemma 4 31B — quality upgrade over 26B; :free endpoint often saturated (262k)" },
+        "google/gemma-4-26b-a4b-it:free":          { "name": "Gemma 4 26B MoE — designer/pr-review, multimodal, fast (262k)" },
         "inclusionai/ling-3.0-flash:free":         { "name": "Ling 3.0 Flash 124B — proposer (262k)" },
         "openai/gpt-oss-20b:free":                 { "name": "gpt-oss 20B — refuter, Apache 2.0 (131k)" }
         // Pennies tier (paid but ~free) if a :free slug delists:
