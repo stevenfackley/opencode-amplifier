@@ -7,7 +7,7 @@ optimize vibes.
 ## What to compare (baselines)
 Run each task under several configs and compare:
 1. **B0 — single constrained model** (Sonnet 4.5 alone, no kit). The floor.
-2. **B1 — single strong model** (GPT-5.1 alone). The reference ceiling for cost.
+2. **B1 — single strong model** (the strongest free reasoner alone). The reference ceiling for cost.
 3. **P — full pipeline** (this kit: architect → tester → executor → /review → /verify).
 4. **A — stripped actor-critic** (executor + reviewer only). The "does the rest earn its keep?"
    control.

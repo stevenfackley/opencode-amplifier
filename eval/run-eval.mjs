@@ -19,8 +19,8 @@ const RESULTS_DIR = join(import.meta.dirname, "results");
 
 // --- configs: how each baseline maps to a model/agent set (EDIT to your real proxy IDs) ------
 const CONFIGS = {
-  B0: { label: "single constrained", args: ["--model", "claude-4-5-sonnet-latest"] },
-  B1: { label: "single strong",      args: ["--model", "gpt-5.1"] },
+  B0: { label: "single constrained", args: ["--model", "openrouter/poolside/laguna-s-2.1:free"] },
+  B1: { label: "single strong",      args: ["--model", "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"] },
   A:  { label: "actor-critic",       args: ["--agent", "build"] }, // executor+reviewer only
   P:  { label: "full pipeline",      args: ["--agent", "build"] }, // relies on this kit's config
 };

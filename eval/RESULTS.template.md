@@ -1,6 +1,6 @@
 # Eval results — <date>
 
-Proxy model IDs used: strong=`<...>` executor=`<...>` cheap=`<...>`
+Model IDs used: strong=`<...>` executor=`<...>` cheap=`<...>`
 
 ## Summary (per task × config)
 | Task | Config | Accept pass | pass@1 | Turns | Churn | Unplanned edits | Plan viol. | Verify retries | Test edits | Tokens | Merge-ready |

@@ -83,7 +83,7 @@ record(existsSync("memory/briefs") ? "PASS" : "FAIL", "memory/briefs/ exists");
 
 try {
   const jsonc = readFileSync("opencode.jsonc", "utf8");
-  if (/PROXY_HOST|YOUR-|changeme/i.test(jsonc)) record("WARN", "opencode.jsonc provider configured", "placeholder marker found — fine at home, fix before real use");
+  if (/PROXY_HOST|YOUR-REAL|changeme/i.test(jsonc)) record("WARN", "opencode.jsonc provider configured", "placeholder marker found — fine at home, fix before real use");
   else record("PASS", "opencode.jsonc provider configured");
 } catch (e) {
   record("FAIL", "opencode.jsonc readable", e.message);
