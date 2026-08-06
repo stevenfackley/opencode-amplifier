@@ -21,7 +21,8 @@
   // ⚠️ The :free roster churns monthly. If a slug 404s: run `node tools/doctor.mjs` WITHOUT
   //    --offline — only the live round-trip catches a dead slug; the static catalog check can't
   //    (it only reflects what this file declares). Then swap in a live :free slug,
-  //    `openrouter/openrouter/free` (auto-router), or a pennies-tier model below.
+  //    `openrouter/openrouter/free` (auto-router), or a pennies-tier model below. A new slug must
+  //    be ADDED to this provider's "models" map before any agent/command can pin it.
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",

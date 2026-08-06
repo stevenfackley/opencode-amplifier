@@ -14,8 +14,9 @@ free, open-weights models, fast.
   `examples/opencode.overlay.example.jsonc` for the shape.
 
 ## 3. Run `/setup`
-It wires the providers, sets per-agent models, and verifies agents/commands/skills load and the
-TDD lock works.
+It wires the providers, confirms the shipped per-agent pins resolve, and verifies
+agents/commands/skills load and the TDD lock works. It ends on `node tools/doctor.mjs` — 0 FAIL
+is the gate.
 
 ## 4. Learn the loop (read `USAGE.md`, then just do this)
 ```
@@ -26,16 +27,16 @@ export TDD_LOCK_TESTS=1
 /evidence           # merge-readiness pack
 ```
 
-## 5. Our day-to-day shortcuts
+## 5. Day-to-day shortcuts
 - Reproducing a web screen → `/port-from-angular` → `/plan`.
 - Calling the backend → `/swift-client` (reuse the contract; ACL the DTOs).
-- Building UI → `/design` + `/pattern swiftui-screen-editorial`; then `/a11y-review` (508 is required).
-- Reviewing a teammate's PR → `/review-pr`.
-- Found a good reusable solution → `/capture-pattern` (the corpus compounds for everyone).
+- Building UI → `/design` + `/pattern swiftui-screen-editorial`; then `/a11y-review` (508 applies).
+- Reviewing someone else's PR → `/review-pr`.
+- Found a good reusable solution → `/capture-pattern` (the corpus compounds over time).
 
 ## 6. The rules that matter
 - Never claim done without `/verify` evidence. Tests are locked during impl (`TDD_LOCK_TESTS=1`).
 - Adapt patterns by FIT (`PATTERNS.md`), don't invent.
-- Consume other teams' libs via the contract + an anti-corruption layer; never fork.
+- Consume shared libs via the contract + an anti-corruption layer; never fork.
 
 That's it. The kit does the heavy lifting — you steer.

@@ -5,8 +5,9 @@
 //   node tools/doctor.mjs [--offline]
 //
 // Static checks always run (file/config sanity, agent mode policy). Live checks call the
-// configured provider — one tiny round-trip per unique pinned model — and are skipped with
-// --offline (use where the provider is unreachable or you have no API key).
+// configured provider — one tiny round-trip per unique pinned model, agent primaries AND
+// `.opencode/command/*.md` frontmatter pins — and are skipped with --offline (use where the
+// provider is unreachable or you have no API key).
 //
 // Exit codes: 0 = all PASS/WARN, 1 = at least one FAIL, 2 = usage error.
 // Conventions (shared with council.mjs): spawned `opencode` never inherits stdin (an open
@@ -56,6 +57,16 @@ for (const a of agents) {
   if (!a.mode || !a.model) record("FAIL", `agent ${a.name}: mode+model present`, `mode=${a.mode} model=${a.model}`);
 }
 
+// Commands may pin their own model in frontmatter; those pins get the same catalog + round-trip
+// proof as agent primaries, so "every pinned model is verified" stays literally true.
+let commandPins = [];
+try {
+  commandPins = readAgents(".opencode/command").filter((c) => c.model);
+  record("PASS", "command model pins parse", `${commandPins.length} pinned: ${commandPins.map((c) => c.name).join(", ")}`);
+} catch (e) {
+  record("FAIL", "command model pins parse", e.message);
+}
+
 const synth = agents.find((a) => a.name === "synthesizer");
 if (synth && synth.mode === "subagent" && synth.editAllow) record("PASS", "synthesizer: subagent + edit:allow");
 else record("FAIL", "synthesizer: subagent + edit:allow", `mode=${synth?.mode} editAllow=${synth?.editAllow}`);
@@ -83,8 +94,14 @@ record(existsSync("memory/briefs") ? "PASS" : "FAIL", "memory/briefs/ exists");
 
 try {
   const jsonc = readFileSync("opencode.jsonc", "utf8");
-  // Catches overlay placeholders (examples/opencode.overlay.example.jsonc) pasted in but never filled.
-  if (/PROXY_HOST|YOUR-REAL|changeme/i.test(jsonc)) record("WARN", "no unfilled overlay placeholders", "placeholder marker still in opencode.jsonc — fill it before real use");
+  // Catches only LIVE placeholders: PROXY_HOST/changeme anywhere, or a YOUR_*/YOUR-* command or
+  // url inside an mcp block that is "enabled": true. A disabled example block never warns.
+  const hits = [];
+  if (/PROXY_HOST|changeme/i.test(jsonc)) hits.push("PROXY_HOST/changeme in opencode.jsonc");
+  for (const [block, name] of jsonc.matchAll(/"([\w-]+)"\s*:\s*\{[^{}]*\}/g)) {
+    if (/"enabled"\s*:\s*true/.test(block) && /"(command|url)"\s*:[^\n]*YOUR[-_]/i.test(block)) hits.push(`mcp ${name} enabled with a placeholder`);
+  }
+  if (hits.length) record("WARN", "no unfilled overlay placeholders", `${hits.join("; ")} — fill it before real use`);
   else record("PASS", "no unfilled overlay placeholders");
 } catch (e) {
   record("FAIL", "opencode.jsonc readable", e.message);
@@ -100,17 +117,23 @@ if (offline) {
   const list = oc(["models"], { timeout: 60_000 });
   const catalog = list.stdout || "";
   if (list.status !== 0) record("FAIL", "opencode models", (list.stderr || "").trim().slice(0, 200));
-  const primaries = [...new Set(agents.map((a) => a.model).filter(Boolean))];
+  // One deduped set: agent primaries + command frontmatter pins. Rows carry the command source
+  // so a command-only pin (e.g. /commit's mechanical model) is distinguishable from an agent's.
+  const primaries = [...new Set([...agents, ...commandPins].map((a) => a.model).filter(Boolean))];
   const fallbackModels = [...new Set(agents.map((a) => a.fallback).filter(Boolean))];
-  for (const m of primaries) record(catalog.includes(m) ? "PASS" : "FAIL", `model in catalog: ${m}`);
+  const label = (m) => {
+    const cmds = commandPins.filter((c) => c.model === m).map((c) => `command:${c.name}`);
+    return cmds.length ? `${m} (${cmds.join(", ")})` : m;
+  };
+  for (const m of primaries) record(catalog.includes(m) ? "PASS" : "FAIL", `model in catalog: ${label(m)}`);
   for (const m of fallbackModels) {
     if (!primaries.includes(m)) record(catalog.includes(m) ? "PASS" : "WARN", `fallback in catalog: ${m}`, catalog.includes(m) ? "" : "declared fallback unavailable — retries will fail");
   }
 
   for (const m of primaries) {
     const r = oc(["run", "-m", m], { input: "Reply with exactly: OK", timeout: 90_000 });
-    if (r.status === 0 && /OK/.test(r.stdout || "")) record("PASS", `round-trip: ${m}`);
-    else record("FAIL", `round-trip: ${m}`, r.status === null ? "timeout" : (r.stderr || r.stdout || "").trim().slice(0, 200));
+    if (r.status === 0 && /OK/.test(r.stdout || "")) record("PASS", `round-trip: ${label(m)}`);
+    else record("FAIL", `round-trip: ${label(m)}`, r.status === null ? "timeout" : (r.stderr || r.stdout || "").trim().slice(0, 200));
   }
 
   const probe = oc(["run", "--agent", "architect"], { input: "Reply with exactly: OK", timeout: 120_000 });

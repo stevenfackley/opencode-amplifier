@@ -49,4 +49,5 @@ synthesizer see multiple outputs, and they see them labeled by model.
 2. All workers fail → answer single-model inline, but the artifact says `status: degraded`
    and the report says so honestly.
 3. A model missing from your provider catalog → use the fallback named in the agent file's frontmatter
-   comment; `/setup` verifies all council models against `opencode models`.
+   comment; `node tools/doctor.mjs` checks every pinned model against `opencode models` (and
+   round-trips it when run live).

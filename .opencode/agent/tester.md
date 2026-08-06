@@ -2,7 +2,7 @@
 description: Independent test author. Writes spec tests from the PLAN ONLY and must NOT read the implementation. Eliminates verification gaming — tests can't be reverse-engineered to pass buggy code.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
 model: openrouter/cohere/north-mini-code:free   # agentic coding model, Cohere family ≠ poolside executor
-fallback: ollama/qwen3.5:9b   # local — used by tools/council.mjs --retry path; doctor.mjs validates it
+fallback: ollama/qwen3.5:9b   # local — used by tools/council.mjs retry (default; --no-retry disables); doctor.mjs validates it
 temperature: 0.1
 permission:
   bash: deny

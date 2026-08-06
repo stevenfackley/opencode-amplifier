@@ -2,7 +2,7 @@
 description: Primary cross-model reviewer. Reviews the diff against TASK.json AND the real test output (not diff-only). Run after every non-trivial step; pairs with reviewer-cheap in /review.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
 model: openrouter/nvidia/nemotron-3-super-120b-a12b:free   # ≠ poolside executor & ≠ reviewer-cheap's local Qwen → /review stays cross-family
-fallback: openrouter/inclusionai/ling-3.0-flash:free   # inclusionAI — decorrelation vs reviewer-cheap survives even when BOTH reviewers fall back; used by tools/council.mjs --retry path; doctor.mjs validates it
+fallback: openrouter/inclusionai/ling-3.0-flash:free   # inclusionAI — decorrelation vs reviewer-cheap survives even when BOTH reviewers fall back; used by tools/council.mjs retry (default; --no-retry disables); doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: deny

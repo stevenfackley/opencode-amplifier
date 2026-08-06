@@ -6,8 +6,9 @@ How to stand up the `ollama/…` tier this kit pins — on your own machine or a
 
 Two tiers, two scarcities. The **chatty** roles run constantly and cost you request quota you
 can't spare: `reviewer-cheap` fires on every `/review`, `/commit` fires on every green step, and
-the executor falls back to a local model when OpenRouter rate-limits. Locally these are $0 and
-unmetered — no 50/day or 1,000/day ceiling, no 401 when a key expires, no data leaving the box.
+the executor is a manual swap away from a local model when OpenRouter rate-limits (there is no
+automatic fallback for the top-level `model` key). Locally these are $0 and unmetered — no 50/day
+or 1,000/day ceiling, no 401 when a key expires, no data leaving the box.
 
 The **bursty** roles (council fan-out, the 1M-ctx mapper, the strong reasoners) are worth
 spending the OpenRouter free pool on: they run a handful of times per task and need model sizes
@@ -43,9 +44,10 @@ Two gotchas: there is **no small `qwen3-coder`** — the smallest is 30B, so on 
 for coding instead. And **Ollama ≥0.32 is required** for the 2026 model families; older builds
 fail the pull with an unknown-architecture error.
 
-Context sizes don't constrain you locally: every local tag above is ≥256k, so the "degraded
-fallback" warning on `mapper.md` (whose hosted fallback drops 1M → 262k) has no local analogue —
-if you re-pin locally you're at 262k either way.
+Context sizes don't constrain you locally: every local *chat* tag above is ≥256k (the embedding
+model has no such window and needs none), so the "degraded fallback" warning on `mapper.md`
+(whose hosted fallback drops 1M → 262k) has no local analogue — if you re-pin locally you're at
+262k either way.
 
 ## 3. Install + serve (macOS)
 

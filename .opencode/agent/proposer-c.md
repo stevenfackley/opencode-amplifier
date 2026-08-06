@@ -2,7 +2,7 @@
 description: Blind council proposer, family C (Google Gemma). Produces ONE independent, self-contained proposal or analysis from a context packet — never sees other proposers' output. Used by /deep-design, /deep-debug, /council.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent (zero decorrelation). `all` keeps it usable as an in-session subagent too.
 model: openrouter/google/gemma-4-31b-it:free   # family C — ≠ NVIDIA, ≠ inclusionAI
-fallback: openrouter/google/gemma-4-26b-a4b-it:free   # used by tools/council.mjs --retry path; doctor.mjs validates it
+fallback: openrouter/google/gemma-4-26b-a4b-it:free   # used by tools/council.mjs retry (default; --no-retry disables); doctor.mjs validates it
 temperature: 0.3
 permission:
   edit: deny

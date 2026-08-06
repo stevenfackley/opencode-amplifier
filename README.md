@@ -21,7 +21,7 @@ explicit recovery* — is baked into the structure below.
 | Task ledger | `.opencode/templates/TASK.template.json` | Single source of truth; survives context loss |
 | Skills (native) | `.opencode/skills/` | `brainstorming`, `test-driven-development`, `verification-before-completion`, `creative-naming`, `distinctive-ui-design`, `reviewing-others-code`, `consuming-shared-libraries`, `dotnet-standard-2.0-compat`, `porting-angular-to-mobile`, `accessibility-508` |
 | Agents (per-model) | `.opencode/agent/` | `architect`, `tester`, `reviewer`, `reviewer-cheap`, `debugger`, `designer`, `pr-reviewer` |
-| Commands | `.opencode/command/` | `/plan /spec-tests /verify /consistency /review /debug /pattern /cross-check /evidence /reground /revert-green /name /design /review-pr /explain /pr-description /adr /commit /swift-client /port-from-angular /a11y-review /capture-pattern /setup /deep-design /deep-debug /deep-review /deep-read /council` |
+| Commands | `.opencode/command/` | `/plan /spec-tests /verify /consistency /review /debug /pattern /cross-check /evidence /reground /revert-green /name /design /review-pr /explain /pr-description /adr /commit /swift-client /port-from-angular /a11y-review /capture-pattern /setup /handoff /resume /deep-design /deep-debug /deep-review /deep-read /council` |
 | Council layer | `.opencode/agent/` (proposer-b/c, judge, mapper, refuter, synthesizer) + `deep-*` commands | Fresh-context multi-model fan-out; artifacts in `.analysis/`, briefs in `memory/briefs/` |
 | Plugins (hooks) | `.opencode/plugins/` | `tdd-lock`, `compaction`, `escalation`, `guardrails`, `metrics`, `rot-guard` |
 | Cheat sheet | `USAGE.md` | One-line "reach for this when…" for every command/skill/agent, grouped by workflow |
@@ -78,20 +78,23 @@ retry once on their declared `fallback:` model). When rot-guard warns, `/handoff
 session → `/resume` continues from a distilled state artifact instead of a bloated context.
 Discipline lives in the `deep-analysis` skill + AGENTS.md rule 10.
 
-## Setup (one free API key + one install, five minutes)
-0. **Doctor:** `node tools/doctor.mjs --offline` for static sanity now; run it again WITHOUT
+## Setup (one free API key + two installs, five minutes)
+1. **OpenCode CLI:** `npm i -g opencode-ai` (or the platform installer at opencode.ai);
+   `opencode --version` must answer before anything below works.
+2. **Doctor:** `node tools/doctor.mjs --offline` for static sanity now; run it again WITHOUT
    `--offline` once your key is set — it round-trips every pinned model and proves
    headless agent routing before you bet a workday on it.
-1. **OpenRouter:** create a free key at openrouter.ai/keys, `export OPENROUTER_API_KEY=…`.
+3. **OpenRouter:** create a free key at openrouter.ai/keys, `export OPENROUTER_API_KEY=…`.
    Free tier = 50 req/day (20/min); a one-time $10 credit purchase unlocks 1,000/day — worth it.
-2. **Ollama (local tier):** install from ollama.com, then
+4. **Ollama (local tier):** install from ollama.com, then
    `ollama pull qwen3.5:9b && ollama pull ornith:9b && ollama pull qwen3.5:4b`
-   (~16GB total, fits 16GB unified RAM).
+   (~16GB on disk; `OLLAMA_MAX_LOADED_MODELS=1` keeps one resident at a time). No agent pins
+   `ornith:9b` — it's the manual executor-swap target, so skip that pull until you want it.
    Hosting on a separate LAN box instead? See `docs/local-models.md` + `examples/`.
-3. **Drop it in:** copy `.opencode/`, `AGENTS.md`, `PATTERNS.md`, `patterns/`, `memory/`, and the
+5. **Drop it in:** copy `.opencode/`, `AGENTS.md`, `PATTERNS.md`, `patterns/`, `memory/`, and the
    relevant `opencode.jsonc` bits into your project, or merge into `~/.config/opencode/`.
    (Verify singular/plural dir names — `agent/` vs `agents/` — for your OpenCode version.)
-4. **Test the lock:** `export TDD_LOCK_TESTS=1` and confirm the executor can't edit a `*.test.*`
+6. **Test the lock:** `export TDD_LOCK_TESTS=1` and confirm the executor can't edit a `*.test.*`
    file.
 
 ## Model tiering (free tier, preserved quota)

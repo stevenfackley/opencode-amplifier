@@ -2,7 +2,7 @@
 description: Read-only staff-level reviewer for OTHER people's pull requests. Embodies reviewing-others-code — collaborative, severity-labeled, mentoring. Never edits the code under review.
 mode: all
 model: openrouter/google/gemma-4-31b-it:free     # strong free general reviewer, multimodal
-fallback: openrouter/inclusionai/ling-3.0-flash:free   # used by tools/council.mjs --retry path; doctor.mjs validates it
+fallback: openrouter/inclusionai/ling-3.0-flash:free   # used by tools/council.mjs retry (default; --no-retry disables); doctor.mjs validates it
 temperature: 0.2
 permission:
   edit: deny              # never modify someone else's branch; bash stays on to fetch diffs / run it
