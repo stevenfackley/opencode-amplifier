@@ -49,7 +49,8 @@
         "cohere/north-mini-code:free":             { "name": "North Mini Code 30B — tester (256k)" },
         "google/gemma-4-31b-it:free":              { "name": "Gemma 4 31B — quality upgrade over 26B; :free endpoint often saturated (262k)" },
         "google/gemma-4-26b-a4b-it:free":          { "name": "Gemma 4 26B MoE — designer/pr-review, multimodal, fast (262k)" },
-        "inclusionai/ling-3.0-flash:free":         { "name": "Ling 3.0 Flash 124B — proposer (262k)" },
+        "inclusionai/ling-3.0-tiny:free":          { "name": "Ling 3.0 Tiny — family-diverse fallback (262k)" },
+        "nvidia/nemotron-3-nano-30b-a3b:free":     { "name": "Nemotron 3 Nano 30B — fast fallback (256k)" },
         "openai/gpt-oss-20b:free":                 { "name": "gpt-oss 20B — refuter, Apache 2.0 (131k)" }
         // Pennies tier (paid but ~free) if a :free slug delists:
         //   "qwen/qwen3.7-flash"            ($0.03/M in, 1M ctx)

@@ -107,7 +107,7 @@ across 5+ families so the `/review` consensus vote has uncorrelated blind spots:
 | Executor | `openrouter/poolside/laguna-s-2.1:free` (manual swap to `ollama/ornith:9b` when rate-limited) | the Build agent, step edits |
 | Cross-family review | `openrouter/nvidia/nemotron-3-super-120b-a12b:free`, `openrouter/cohere/north-mini-code:free` | reviewer, tester |
 | Decorrelated review | `ollama/qwen3.5:9b` (local, $0) | reviewer-cheap (different blind spots) |
-| Council diversity | `openrouter/inclusionai/ling-3.0-flash:free`, `openrouter/google/gemma-4-26b-a4b-it:free`, `openrouter/openai/gpt-oss-20b:free` | proposers, refuter, designer |
+| Council diversity | `openrouter/poolside/laguna-s-2.1:free`, `openrouter/google/gemma-4-26b-a4b-it:free`, `openrouter/openai/gpt-oss-20b:free` | proposers, refuter, designer |
 | Mechanical | `ollama/qwen3.5:4b` | commit messages, boilerplate, renames |
 
 ⚠️ The `:free` roster churns monthly. `node tools/doctor.mjs` (live, no `--offline`) catches
