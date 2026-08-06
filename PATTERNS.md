@@ -4,7 +4,7 @@ Read this before designing anything non-trivial. Each entry is a minimal, self-c
 **generic** worked example of a pattern a constrained model tends not to reach for on its own.
 Pull one into context with `/pattern <name>` and **adapt** it rather than inventing.
 
-> Keep every pattern generic and free of employer-derived code/data. That is what makes this
+> Keep every pattern generic and free of private, project-derived code/data. That is what makes this
 > repo legitimately public/MIT and import-safe.
 
 ## Retrieve by FIT, not by similarity

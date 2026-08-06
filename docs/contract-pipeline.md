@@ -1,6 +1,6 @@
 # Contract pipeline (PROPOSAL — needs approval before wiring live)
 
-> Status: **design + templates only.** Wiring this to live internal services needs sign-off
+> Status: **design + templates only.** Wiring this to your live services needs review
 > (access to the shared services' OpenAPI, a CI runner that can reach them). The examples here are
 > ready to hand to whoever approves it.
 

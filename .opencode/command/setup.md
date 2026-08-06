@@ -12,7 +12,7 @@ Set up opencode-amplifier for use. Walk through and report status at each step:
 3. **Set per-agent models** in `.opencode/agent/*.md`: strong reasoner for architect/tester/
    debugger/pr-reviewer, a coding-tuned model for the executor, `reviewer-cheap` = a cheap
    different family.
-4. **Apply the team overlay** if one exists (real IDs + team conventions) — see
+4. **Apply your personal overlay** if you have one (LAN host, paid IDs) — see
    `examples/opencode.overlay.example.jsonc`.
 5. **Verify:** `@arch…` autocompletes (agents loaded), commands list (`/plan` etc.), a skill loads,
    and `TDD_LOCK_TESTS=1` blocks editing a `*.test.*` file.

@@ -1,21 +1,21 @@
 # Onboarding — get amplified in 5 minutes
 
 For a teammate adopting the kit. Goal: from zero to a contract-governed, multi-model workflow on
-the constrained models, fast.
+free, open-weights models, fast.
 
 ## 1. Prereqs
-- OpenCode CLI installed, pointed at the LM AI-factory proxy.
-- `export LM_PROXY_API_KEY=…` (your proxy key).
+- OpenCode CLI installed. Ollama running locally (or on a LAN box — see `docs/local-models.md`).
+- `export OPENROUTER_API_KEY=…` (free key from openrouter.ai/keys).
 
 ## 2. Get the kit
 - Clone this repo, OR merge its `.opencode/`, `AGENTS.md`, `PATTERNS.md`, `patterns/`, `memory/`
   into `~/.config/opencode/` to make it global across all your projects.
-- Apply the **team overlay** (internal repo) for real proxy IDs + our conventions — ask your lead,
-  see `examples/opencode.overlay.example.jsonc` for the shape.
+- Optionally apply a **personal overlay** (LAN model host, paid-tier IDs) — see
+  `examples/opencode.overlay.example.jsonc` for the shape.
 
 ## 3. Run `/setup`
-It wires the proxy, sets per-agent models, and verifies agents/commands/skills load and the TDD
-lock works.
+It wires the providers, sets per-agent models, and verifies agents/commands/skills load and the
+TDD lock works.
 
 ## 4. Learn the loop (read `USAGE.md`, then just do this)
 ```

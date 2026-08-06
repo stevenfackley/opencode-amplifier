@@ -90,7 +90,7 @@ try {
   record("FAIL", "opencode.jsonc readable", e.message);
 }
 
-record(process.env.OPENROUTER_API_KEY ? "PASS" : "WARN", "OPENROUTER_API_KEY set", "openrouter/* pins will 401 on live checks");
+record(process.env.OPENROUTER_API_KEY ? "PASS" : "WARN", "OPENROUTER_API_KEY set", process.env.OPENROUTER_API_KEY ? "" : "openrouter/* pins will 401 on live checks");
 
 // ---------- live checks ----------
 
