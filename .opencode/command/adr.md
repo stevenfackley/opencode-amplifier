@@ -1,6 +1,6 @@
 ---
 description: Write an Architecture Decision Record (ADR) for a significant technical decision
-model: gpt-5.1     # strong reasoner for weighing alternatives
+model: openrouter/nvidia/nemotron-3-ultra-550b-a55b:free     # strongest free reasoner for weighing alternatives
 ---
 
 Write an ADR for the decision below. Investigate the relevant code first so the context and
