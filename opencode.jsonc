@@ -1,40 +1,54 @@
 {
   // opencode reads opencode.jsonc (comments allowed). Merge into your project's existing config
-  // if you have one. Everything in CAPS_PLACEHOLDER must be replaced.
+  // if you have one. Works out of the box on FREE, open-weights models only:
+  //   - ollama:      local models (http://localhost:11434 — or a LAN box, see examples/ overlay)
+  //   - openrouter:  big open-weights models on OpenRouter's :free tier (needs OPENROUTER_API_KEY;
+  //                  free account = 50 req/day, a one-time $10 credit purchase unlocks 1,000/day)
   //
   // Auto-discovered from .opencode/ (no config needed): agent/, command/, skills/, plugins/.
   // OpenCode also auto-discovers .claude/skills/ — so your existing superpowers skills work too.
   "$schema": "https://opencode.ai/config.json",
 
-  // --- 1. Point OpenCode at the Lockheed AI-factory proxy (OpenAI-compatible) ----------------
-  // Provider is keyed "lmproxy" (baseURL/apiKey/models below). Agents reference models by BARE
-  // name (e.g. `model: gpt-5.1`) — this proxy resolves them without a provider/ prefix.
+  // --- 1. Providers (both OpenAI-compatible) -------------------------------------------------
+  // Agents reference models PROVIDER-PREFIXED (e.g. `model: ollama/qwen3.5:9b`).
+  // ⚠️ The :free roster churns monthly. If a slug 404s: run `node tools/doctor.mjs`, then swap in
+  //    a live :free slug, `openrouter/openrouter/free` (auto-router), or a pennies-tier model below.
   "provider": {
-    "lmproxy": {
+    "ollama": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "LM AI Factory",
+      "name": "Ollama (local)",
+      "options": { "baseURL": "http://localhost:11434/v1" },   // no API key needed
+      "models": {
+        "qwen3.5:9b":          { "name": "Qwen3.5 9B — local reasoner/reviewer-cheap (262k)" },
+        "ornith:9b":           { "name": "Ornith 9B — agentic coder, executor fallback (MIT)" },
+        "qwen3.5:4b":          { "name": "Qwen3.5 4B — mechanical (/commit), fast" },
+        "gemma4:12b-it-qat":   { "name": "Gemma 4 12B QAT — family-diverse local alt (256k)" }
+      }
+    },
+    "openrouter": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OpenRouter (free open-weights)",
       "options": {
-        "baseURL": "https://PROXY_HOST/v1",       // <-- replace
-        "apiKey": "{env:LM_PROXY_API_KEY}"         // <-- export in your shell
+        "baseURL": "https://openrouter.ai/api/v1",
+        "apiKey": "{env:OPENROUTER_API_KEY}"                   // free account: openrouter.ai/keys
       },
       "models": {
-        "claude-4-5-sonnet-latest":           { "name": "Sonnet 4.5 — executor/designer (200k)" },
-        "claude-3-7-sonnet-latest":           { "name": "Sonnet 3.7 (200k)" },
-        "gpt-5.1":                            { "name": "GPT-5.1 — architect/tester/pr-reviewer (200k)" },
-        "nemotron-3-ultra-550b-a55b":         { "name": "Nemotron Ultra 550B — debugger, top reasoner (262k)" },
-        "nemotron-3-super-120b-a12b":         { "name": "Nemotron Super 120B (1M ctx)" },
-        "nemotron-3-nano-30b-a3b":            { "name": "Nemotron Nano 30B — reviewer-cheap, fast (1M ctx)" },
-        "mistral-large-3-675b-instruct-2512": { "name": "Mistral Large 3 675B — reviewer (294k)" },
-        "mistral-small-4-119b-2603":          { "name": "Mistral Small 4 119B (262k)" },
-        "devstral-small-2-24b-instruct-2512": { "name": "Devstral 24B — coding-tuned, cheap; /commit (290k)" },
-        "mamba-codestral-7b-v0.1":            { "name": "Codestral Mamba 7B — fast code (128k)" },
-        "llama-4-scout":                      { "name": "Llama 4 Scout — 1M ctx, whole-codebase reads" },
-        "gpt-oss-120b":                       { "name": "gpt-oss 120B (131k)" },
-        "gemma-4-31b-it":                     { "name": "Gemma 4 31B — cheap mechanical (262k)" }
+        "nvidia/nemotron-3-ultra-550b-a55b:free":  { "name": "Nemotron 3 Ultra 550B — top reasoner, only free 1M ctx" },
+        "nvidia/nemotron-3-super-120b-a12b:free":  { "name": "Nemotron 3 Super 120B — reviewer/synthesizer (262k)" },
+        "poolside/laguna-s-2.1:free":              { "name": "Laguna-S 2.1 118B — coding agent, executor (262k)" },
+        "cohere/north-mini-code:free":             { "name": "North Mini Code 30B — tester (256k)" },
+        "google/gemma-4-31b-it:free":              { "name": "Gemma 4 31B — designer/pr-review, multimodal (262k)" },
+        "google/gemma-4-26b-a4b-it:free":          { "name": "Gemma 4 26B MoE — fast fallback (262k)" },
+        "inclusionai/ling-3.0-flash:free":         { "name": "Ling 3.0 Flash 124B — proposer (262k)" },
+        "openai/gpt-oss-20b:free":                 { "name": "gpt-oss 20B — refuter, Apache 2.0 (131k)" }
+        // Pennies tier (paid but ~free) if a :free slug delists:
+        //   "qwen/qwen3.7-flash"            ($0.03/M in, 1M ctx)
+        //   "z-ai/glm-4.7-flash"            ($0.06/M in)
+        //   "deepseek/deepseek-v4-flash-0731" ($0.09/M in, 1M ctx)
       }
     }
   },
-  "model": "claude-4-5-sonnet-latest",             // default for the Build/executor agent (bare ID)
+  "model": "openrouter/poolside/laguna-s-2.1:free",   // Build/executor default; local fallback: ollama/ornith:9b
 
   // --- 2. Always-on instructions (combined with AGENTS.md) ----------------------------------
   // Globs and even remote URLs are supported. This loads the rails + durable memory every turn.
@@ -53,7 +67,7 @@
   //   FIX: wrap in `cmd /c ...` so cmd.exe (a real binary) resolves the shim via PATHEXT.
   //   On macOS/Linux drop the ["cmd","/c", ...] prefix — use the POSIX form in each comment.
   //   Locked-down npm? `npx -y` reaches the registry on every launch; if blocked, `npm i -g`
-  //   the server from your internal mirror and point the command at the installed binary.
+  //   the server from your registry mirror and point the command at the installed binary.
   "mcp": {
     // Retrieval over the pattern corpus. (Optional — /pattern and @patterns/<name> read files
     // directly and need NO MCP, so you can also just disable this and lose nothing functional.)
@@ -64,10 +78,10 @@
       "enabled": true
     },
     // Authoritative API docs -> kills hallucinated APIs (top weak-model failure, esp. .NET).
-    // Prefer an internal mirror if external fetch isn't approved. (Remote = no spawn, no cmd /c.)
+    // Point at whatever docs MCP you use, or leave disabled. (Remote = no spawn, no cmd /c.)
     "docs": {
       "type": "remote",
-      "url": "https://INTERNAL_DOCS_MCP",
+      "url": "https://YOUR_DOCS_MCP",
       "enabled": false
     },
     // Repo awareness across multi-step work. NOTE: server-git is a PYTHON package — run via uvx
