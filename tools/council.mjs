@@ -18,7 +18,7 @@
 // it needs judgment, and you want to see the dissent register land.
 //
 // --model overrides every worker's pinned model (opencode `-m`). Only for smoke-testing the
-// plumbing on a network where the pinned proxy models are unreachable — it collapses the
+// plumbing on a network where the pinned models are unreachable — it collapses the
 // council to ONE family, so never use it for real analysis.
 //
 // WINDOWS GOTCHA (same class as the MCP one in opencode.jsonc): a global `opencode` may be
@@ -141,7 +141,7 @@ async function runWorker(worker) {
 const results = await Promise.all(workers.map(runWorker));
 const failed = results.filter((r) => r.code !== 0);
 if (failed.length === results.length) {
-  console.error("All workers failed — check `opencode models` and the proxy key. Degrade per the deep-analysis skill.");
+  console.error("All workers failed — check `opencode models` and your provider key(s). Degrade per the deep-analysis skill.");
   process.exit(1);
 }
 if (failed.length) console.warn(`${failed.length}/${results.length} workers failed — a council of ${results.length - failed.length} is still a council.`);

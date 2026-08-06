@@ -1,9 +1,14 @@
 {
   // opencode reads opencode.jsonc (comments allowed). Merge into your project's existing config
-  // if you have one. Works out of the box on FREE, open-weights models only:
-  //   - ollama:      local models (http://localhost:11434 — or a LAN box, see examples/ overlay)
-  //   - openrouter:  big open-weights models on OpenRouter's :free tier (needs OPENROUTER_API_KEY;
-  //                  free account = 50 req/day, a one-time $10 credit purchase unlocks 1,000/day)
+  // if you have one. Runs entirely on free, open-weights models:
+  //   - ollama:      local models (http://localhost:11434 — or a LAN box, see examples/ overlay).
+  //                  This is the $0/unlimited tier: reviewer-cheap's primary and /commit run here.
+  //                  No Ollama? Re-pin those two to a :free slug (e.g.
+  //                  openrouter/google/gemma-4-26b-a4b-it:free) and you lose the unmetered tier.
+  //   - openrouter:  big open-weights models on OpenRouter's :free tier (needs OPENROUTER_API_KEY).
+  //                  Free-key tier = 50 req/day and an agentic session burns hundreds: do the
+  //                  one-time $10 credit purchase for 1,000/day, or set "model" below to
+  //                  ollama/ornith:9b and run fully local.
   //
   // Auto-discovered from .opencode/ (no config needed): agent/, command/, skills/, plugins/.
   // OpenCode also auto-discovers .claude/skills/ — so your existing superpowers skills work too.
@@ -11,8 +16,10 @@
 
   // --- 1. Providers (both OpenAI-compatible) -------------------------------------------------
   // Agents reference models PROVIDER-PREFIXED (e.g. `model: ollama/qwen3.5:9b`).
-  // ⚠️ The :free roster churns monthly. If a slug 404s: run `node tools/doctor.mjs`, then swap in
-  //    a live :free slug, `openrouter/openrouter/free` (auto-router), or a pennies-tier model below.
+  // ⚠️ The :free roster churns monthly. If a slug 404s: run `node tools/doctor.mjs` WITHOUT
+  //    --offline — only the live round-trip catches a dead slug; the static catalog check can't
+  //    (it only reflects what this file declares). Then swap in a live :free slug,
+  //    `openrouter/openrouter/free` (auto-router), or a pennies-tier model below.
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
@@ -20,7 +27,7 @@
       "options": { "baseURL": "http://localhost:11434/v1" },   // no API key needed
       "models": {
         "qwen3.5:9b":          { "name": "Qwen3.5 9B — local reasoner/reviewer-cheap (262k)" },
-        "ornith:9b":           { "name": "Ornith 9B — agentic coder, executor fallback (MIT)" },
+        "ornith:9b":           { "name": "Ornith 9B — agentic coder, local executor alternative (MIT)" },
         "qwen3.5:4b":          { "name": "Qwen3.5 4B — mechanical (/commit), fast" },
         "gemma4:12b-it-qat":   { "name": "Gemma 4 12B QAT — family-diverse local alt (256k)" }
       }
@@ -48,7 +55,7 @@
       }
     }
   },
-  "model": "openrouter/poolside/laguna-s-2.1:free",   // Build/executor default; local fallback: ollama/ornith:9b
+  "model": "openrouter/poolside/laguna-s-2.1:free",   // Build/executor default. No automatic fallback exists for this key — if rate-limited, swap to ollama/ornith:9b
 
   // --- 2. Always-on instructions (combined with AGENTS.md) ----------------------------------
   // Globs and even remote URLs are supported. This loads the rails + durable memory every turn.

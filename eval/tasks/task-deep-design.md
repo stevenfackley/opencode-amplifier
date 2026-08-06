@@ -2,7 +2,7 @@
 
 **Tier:** architecture (council)
 **Work type:** greenfield
-**Compares:** `/deep-design` vs single-shot Sonnet design (baseline)
+**Compares:** `/deep-design` vs a single-shot design from one strong reasoner (baseline)
 
 ## Setup
 Pick a design question with well-documented trade-offs and write the reference list BEFORE

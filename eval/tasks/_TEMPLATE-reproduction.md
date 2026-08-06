@@ -26,4 +26,4 @@ presentation for touch to the `distinctive-ui-design` standard; meet 508/WCAG.
   tokens · merge-readiness (human edits needed).
 
 ## Configs to compare
-B0 (Sonnet alone) · P (full pipeline: `/port-from-angular`→`/plan`→`/spec-tests`→build→`/review`).
+B0 (the executor model alone) · P (full pipeline: `/port-from-angular`→`/plan`→`/spec-tests`→build→`/review`).

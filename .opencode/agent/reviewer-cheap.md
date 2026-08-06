@@ -2,7 +2,7 @@
 description: Decorrelated second reviewer on a CHEAP, architecturally-different model. Different training distribution = different blind spots. Used in the /review consensus vote.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
 model: ollama/qwen3.5:9b   # local = $0 + no rate limits; Qwen family ≠ reviewer's NVIDIA
-fallback: ollama/gemma4:12b-it-qat   # used by tools/council.mjs --retry path; doctor.mjs validates it
+fallback: openrouter/google/gemma-4-26b-a4b-it:free   # remote escape hatch for no-Ollama users; Google ≠ reviewer's NVIDIA/inclusionAI; used by tools/council.mjs --retry path; doctor.mjs validates it
 temperature: 0.1
 permission:
   edit: deny

@@ -4,7 +4,7 @@ The kit only becomes a "game changer at work" if you can SHOW it beats a bare mo
 tasks. This is the evidence that wins team adoption and makes the impact visible in a review.
 
 ## Capture per task (kit vs baseline)
-Run the same real ticket two ways — **B0** (Sonnet alone, no kit) and **P** (full pipeline) — and log:
+Run the same real ticket two ways — **B0** (the executor model alone, no kit) and **P** (full pipeline) — and log:
 
 | Metric | How to read it |
 |---|---|

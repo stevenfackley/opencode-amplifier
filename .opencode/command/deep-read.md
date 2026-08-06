@@ -13,8 +13,9 @@ Follow the `deep-analysis` skill for packet and artifact rules.
    changed files; carry unchanged sections forward verbatim. No brief → map everything.
 3. **Map.** For each selected subsystem, invoke `@mapper` with the subsystem's file listing
    + file contents (mapper is the ONE worker built for raw dumps — its 1M context is the
-   compressor). Each returns one `### <subsystem>` section, cap 40 lines, per
-   `.opencode/templates/BRIEF.template.md`.
+   compressor). Retries run on mapper's 262k fallback, so a packet that only fits 1M will
+   overflow on retry — chunk subsystems to ≤200k. Each returns one `### <subsystem>` section,
+   cap 40 lines, per `.opencode/templates/BRIEF.template.md`.
 4. **Assemble.** Send all sections (new + carried-forward) to `@synthesizer`: follow the
    BRIEF template, write `memory/briefs/CODEBASE-BRIEF.md` (whole repo) or
    `memory/briefs/BRIEF-<area>.md`, stamp frontmatter `git_sha` with current HEAD, add

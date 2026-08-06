@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // doctor.mjs — first-run kit verifier. Run from the repo root BEFORE any real work on a new
-// machine, after a proxy change, or after an OpenCode upgrade:
+// machine, after a provider change, or after an OpenCode upgrade:
 //
 //   node tools/doctor.mjs [--offline]
 //
 // Static checks always run (file/config sanity, agent mode policy). Live checks call the
 // configured provider — one tiny round-trip per unique pinned model — and are skipped with
-// --offline (use at home where the work proxy is unreachable).
+// --offline (use where the provider is unreachable or you have no API key).
 //
 // Exit codes: 0 = all PASS/WARN, 1 = at least one FAIL, 2 = usage error.
 // Conventions (shared with council.mjs): spawned `opencode` never inherits stdin (an open
@@ -83,11 +83,14 @@ record(existsSync("memory/briefs") ? "PASS" : "FAIL", "memory/briefs/ exists");
 
 try {
   const jsonc = readFileSync("opencode.jsonc", "utf8");
-  if (/PROXY_HOST|YOUR-REAL|changeme/i.test(jsonc)) record("WARN", "opencode.jsonc provider configured", "placeholder marker found — fine at home, fix before real use");
-  else record("PASS", "opencode.jsonc provider configured");
+  // Catches overlay placeholders (examples/opencode.overlay.example.jsonc) pasted in but never filled.
+  if (/PROXY_HOST|YOUR-REAL|changeme/i.test(jsonc)) record("WARN", "no unfilled overlay placeholders", "placeholder marker still in opencode.jsonc — fill it before real use");
+  else record("PASS", "no unfilled overlay placeholders");
 } catch (e) {
   record("FAIL", "opencode.jsonc readable", e.message);
 }
+
+record(process.env.OPENROUTER_API_KEY ? "PASS" : "WARN", "OPENROUTER_API_KEY set", "openrouter/* pins will 401 on live checks");
 
 // ---------- live checks ----------
 
