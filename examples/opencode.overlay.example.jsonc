@@ -1,6 +1,9 @@
 {
-  // PERSONAL OVERLAY EXAMPLE — layer your private wiring (LAN model host, paid model IDs)
+  // PERSONAL OVERLAY EXAMPLE — layer your private wiring (LAN model host, extra/paid model IDs)
   // over the generic kit. Keep a filled-in copy out of public repos.
+  //
+  // Scope: this overlay changes PROVIDERS (endpoints, credentials, which models exist).
+  // It CANNOT re-pin an existing agent's model — see the note at the bottom of this file.
   //
   // Usage: merge into the project's opencode.jsonc, or keep as ~/.config/opencode/opencode.jsonc.
   "$schema": "https://opencode.ai/config.json",
@@ -31,6 +34,26 @@
     "memory/MEMORY.md"
   ]
 
-  // Tip: pin which model each agent uses here too, if you don't want to edit the kit's agent
-  // files directly — keeps the public kit pristine and your real choices in the overlay.
+  // ⚠️ You CANNOT re-pin an agent's model from this overlay. An `agent.<name>.model` key here is
+  // SILENTLY IGNORED whenever the agent's .md carries a `model:` line — markdown frontmatter beats
+  // JSON, and config precedence is remote → global → custom (OPENCODE_CONFIG) → project, so the
+  // kit's own project config outranks a global overlay too. Verified with `opencode debug agent`:
+  //
+  //   .opencode/agent/x.md `model: ollama/qwen3.5:4b` + overlay `agent.x.model` -> md wins
+  //   .opencode/agent/x.md with NO `model:` line       + overlay `agent.x.model` -> overlay wins
+  //
+  // So `agent.<name>.model` here only sets a DEFAULT for agents whose .md omits `model:`.
+  //
+  // To actually run this kit's agents on your own (e.g. paid) models, pick one:
+  //
+  //   1. Personal global agent set — RECOMMENDED. Copy the kit's .opencode/agent/*.md to
+  //      ~/.config/opencode/agent/ and rewrite `model:`/`fallback:` there. A project's
+  //      .opencode/agent/<name>.md SHADOWS the global file of the same name, so those agents
+  //      apply in every project EXCEPT one that ships its own — this repo keeps demonstrating
+  //      the free tier while your other work runs on your models. (Verified.)
+  //
+  //   2. Edit .opencode/agent/*.md in your own clone and keep the diff local.
+  //
+  // Provider-level overrides (baseURL, credentials, extra models) DO work from here — that is
+  // what the `provider` block above is for.
 }
