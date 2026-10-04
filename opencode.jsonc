@@ -1,40 +1,28 @@
 {
   // opencode reads opencode.jsonc (comments allowed). Merge into your project's existing config
-  // if you have one. Runs entirely on free, open-weights models:
-  //   - ollama:      local models (http://localhost:11434 — or a LAN box, see examples/ overlay).
-  //                  This is the $0/unlimited tier: reviewer-cheap's primary and /commit run here.
-  //                  No Ollama? Re-pin those two to a :free slug (e.g.
-  //                  openrouter/google/gemma-4-26b-a4b-it:free) and you lose the unmetered tier.
+  // if you have one. Runs entirely on free, open-weights models, and needs exactly ONE thing:
   //   - openrouter:  big open-weights models on OpenRouter's :free tier (needs OPENROUTER_API_KEY).
   //                  Free-key tier = 50 req/day and an agentic session burns hundreds: do the
-  //                  one-time $10 credit purchase for 1,000/day. (Setting "model" below to
-  //                  ollama/ornith:9b only localizes the default executor session — every named
-  //                  agent keeps its own openrouter/* pin; going fully local means re-pinning
-  //                  each .opencode/agent/*.md too.)
+  //                  one-time $10 credit purchase for 1,000/day.
+  //
+  // No local model server is required. A local Ollama tier is OPTIONAL and costs $0/unmetered —
+  // see docs/local-models.md to stand one up and examples/opencode.overlay.example.jsonc for the
+  // provider block + which pins to move. It is opt-in on purpose: a declared provider pointing at
+  // a host that isn't running resolves silently to a dead endpoint, and agents pinned to it fail
+  // with no useful error.
   //
   // Auto-discovered from .opencode/ (no config needed): agent/, command/, skills/, plugins/.
   // OpenCode also auto-discovers .claude/skills/ — so your existing superpowers skills work too.
   "$schema": "https://opencode.ai/config.json",
 
-  // --- 1. Providers (both OpenAI-compatible) -------------------------------------------------
-  // Agents reference models PROVIDER-PREFIXED (e.g. `model: ollama/qwen3.5:9b`).
+  // --- 1. Provider (OpenAI-compatible) -------------------------------------------------------
+  // Agents reference models PROVIDER-PREFIXED (e.g. `model: openrouter/cohere/north-mini-code:free`).
   // ⚠️ The :free roster churns monthly. If a slug 404s: run `node tools/doctor.mjs` WITHOUT
   //    --offline — only the live round-trip catches a dead slug; the static catalog check can't
   //    (it only reflects what this file declares). Then swap in a live :free slug,
   //    `openrouter/openrouter/free` (auto-router), or a pennies-tier model below. A new slug must
   //    be ADDED to this provider's "models" map before any agent/command can pin it.
   "provider": {
-    "ollama": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Ollama (local)",
-      "options": { "baseURL": "http://localhost:11434/v1" },   // no API key needed
-      "models": {
-        "qwen3.5:9b":          { "name": "Qwen3.5 9B — local reasoner/reviewer-cheap (262k)" },
-        "ornith:9b":           { "name": "Ornith 9B — agentic coder, local executor alternative (MIT)" },
-        "qwen3.5:4b":          { "name": "Qwen3.5 4B — mechanical (/commit), fast" },
-        "gemma4:12b-it-qat":   { "name": "Gemma 4 12B QAT — family-diverse local alt (256k)" }
-      }
-    },
     "openrouter": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "OpenRouter (free open-weights)",
@@ -43,15 +31,31 @@
         "apiKey": "{env:OPENROUTER_API_KEY}"                   // free account: openrouter.ai/keys
       },
       "models": {
-        "nvidia/nemotron-3-ultra-550b-a55b:free":  { "name": "Nemotron 3 Ultra 550B — top reasoner, only free 1M ctx" },
+        // ── Round-tripped live 2026-08-29. Every PIN in this kit uses one of these. ──────────
+        "nvidia/nemotron-3-ultra-550b-a55b:free":  { "name": "Nemotron 3 Ultra 550B — top reasoner, 1M ctx (~18s)" },
         "nvidia/nemotron-3-super-120b-a12b:free":  { "name": "Nemotron 3 Super 120B — reviewer/synthesizer (262k)" },
+        "nvidia/nemotron-3.5-lightning:free":      { "name": "Nemotron 3.5 Lightning — fast fallback (1M ctx)" },
         "poolside/laguna-s-2.1:free":              { "name": "Laguna-S 2.1 118B — coding agent, executor (262k)" },
+        "poolside/laguna-xs-2.1:free":             { "name": "Laguna-XS 2.1 — mechanical (/commit), fast (262k)" },
         "cohere/north-mini-code:free":             { "name": "North Mini Code 30B — tester (256k)" },
-        "google/gemma-4-31b-it:free":              { "name": "Gemma 4 31B — quality upgrade over 26B; :free endpoint often saturated (262k)" },
-        "google/gemma-4-26b-a4b-it:free":          { "name": "Gemma 4 26B MoE — designer/pr-review, multimodal, fast (262k)" },
-        "inclusionai/ling-3.0-tiny:free":          { "name": "Ling 3.0 Tiny — family-diverse fallback (262k)" },
-        "nvidia/nemotron-3-nano-30b-a3b:free":     { "name": "Nemotron 3 Nano 30B — fast fallback (256k)" },
-        "openai/gpt-oss-20b:free":                 { "name": "gpt-oss 20B — refuter, Apache 2.0 (131k)" }
+        "minimax/minimax-m3:free":                 { "name": "MiniMax M3 — reviewer-cheap/pr-review, VISION, 1M ctx" },
+        "minimax/minimax-m2.7:free":               { "name": "MiniMax M2.7 — fast family-diverse fallback (~13s, 196k)" },
+        "thinkingmachines/inkling-small:free":     { "name": "Inkling Small — designer/refuter/proposer-c, VISION, 1M ctx (~12s)" },
+
+        // ── Declared but NOT pinned: reachable via `-m`, depended on by nothing. ────────────
+        // Both Gemma :free endpoints timed out (>100s) on 2026-08-29 — the kit already described
+        // this endpoint as "often saturated". Fine for a manual one-off, wrong for an agent pin.
+        "google/gemma-4-31b-it:free":              { "name": "Gemma 4 31B — SATURATED, unpinned (262k)" },
+        "google/gemma-4-26b-a4b-it:free":          { "name": "Gemma 4 26B MoE — SATURATED, unpinned, multimodal (262k)" }
+
+        // ── REMOVED 2026-08-29 — verified broken by live round-trip. ────────────────────────
+        // ⚠️ `opencode models` STILL LISTS the delisted ones, so the static catalog check PASSES
+        //    and only a real call fails. Never re-add without a round-trip.
+        //   "openai/gpt-oss-20b:free"              -> "unavailable for free" (was refuter PRIMARY)
+        //   "nvidia/nemotron-3-nano-30b-a3b:free"  -> "unavailable for free" (was 3 fallbacks)
+        //   "inclusionai/ling-3.0-tiny:free"       -> ProviderModelNotFound, slug is gone entirely
+        //                                             (was proposer-b + refuter fallback)
+        //
         // Pennies tier (paid but ~free) if a :free slug delists:
         //   "qwen/qwen3.7-flash"            ($0.03/M in, 1M ctx)
         //   "z-ai/glm-4.7-flash"            ($0.06/M in)
@@ -59,7 +63,7 @@
       }
     }
   },
-  "model": "openrouter/poolside/laguna-s-2.1:free",   // Build/executor default. No automatic fallback exists for this key — if rate-limited, swap to ollama/ornith:9b
+  "model": "openrouter/poolside/laguna-s-2.1:free",   // Build/executor default. No automatic fallback exists for this key — if rate-limited, swap to another :free slug above (or a local one, if you added the optional Ollama tier)
 
   // --- 2. Always-on instructions (combined with AGENTS.md) ----------------------------------
   // Globs and even remote URLs are supported. This loads the rails + durable memory every turn.

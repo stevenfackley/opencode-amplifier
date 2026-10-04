@@ -1,8 +1,8 @@
 ---
 description: Decorrelated second reviewer on a CHEAP, architecturally-different model. Different training distribution = different blind spots. Used in the /review consensus vote.
 mode: all   # `all`, not `subagent`: headless `opencode run --agent` only accepts primaries — a subagent SILENTLY falls back to the default agent. `all` keeps it usable as an in-session subagent too.
-model: ollama/qwen3.5:9b   # local = $0 + no rate limits; Qwen family ≠ reviewer's NVIDIA
-fallback: openrouter/google/gemma-4-26b-a4b-it:free   # fires ONLY on the headless tools/council.mjs retry (default; --no-retry disables) — in-session /review and /deep-review always use the primary, so no-Ollama users must re-pin the PRIMARY to a :free slug; Google ≠ reviewer's NVIDIA/inclusionAI; doctor.mjs validates it
+model: openrouter/minimax/minimax-m3:free   # MiniMax != reviewer's NVIDIA and != poolside executor; 1M ctx. Replaces gemma-4-26b (saturated)
+fallback: openrouter/minimax/minimax-m2.7:free   # same-family sibling; at full fallback reviewer=Cohere / this=MiniMax / refuter=NVIDIA stay distinct
 temperature: 0.1
 permission:
   edit: deny

@@ -1,6 +1,11 @@
-# Local model hosting (Ollama)
+# Local model hosting (Ollama) — optional
 
-How to stand up the `ollama/…` tier this kit pins — on your own machine or a LAN box.
+How to stand up an **optional** `ollama/…` tier — on your own machine or a LAN box.
+
+> The kit ships with no local dependency: every pin is an `openrouter/…:free` slug and one API
+> key runs the whole thing. Nothing here is required. Add this tier only if you want the chatty
+> roles off your OpenRouter pool — and only if the server will actually be up, because a declared
+> provider pointing at a dead host resolves silently and its agents fail with no useful error.
 
 ## 1. Why local
 
@@ -147,9 +152,19 @@ ping -c 1 macmini.local
 curl -s http://macmini.local:11434/api/tags
 ```
 
-Client side is one line of config — copy `examples/opencode.overlay.example.jsonc` and change
-`provider.ollama.options.baseURL` to `http://macmini.local:11434/v1`. Nothing else in the kit
-changes; agent pins stay `ollama/qwen3.5:9b` etc.
+Client side: copy the `provider.ollama` block from `examples/opencode.overlay.example.jsonc` into
+your config and set `options.baseURL` to `http://macmini.local:11434/v1`. Then move the pins you
+want local — the two the tier is designed for are:
+
+| File | Ships as | Local swap |
+|---|---|---|
+| `.opencode/agent/reviewer-cheap.md` | `openrouter/google/gemma-4-26b-a4b-it:free` | `ollama/qwen3.5:9b` |
+| `.opencode/command/commit.md` | `openrouter/nvidia/nemotron-3-nano-30b-a3b:free` | `ollama/qwen3.5:4b` |
+
+Keep `reviewer-cheap` in a family that is neither the executor's (poolside) nor the primary
+reviewer's (NVIDIA) — that decorrelation is the whole point of the `/review` consensus vote.
+`node tools/doctor.mjs` round-trips any `ollama/*` primary over direct HTTP and will tell you if
+the endpoint is dead.
 
 ## 5. 16GB tuning
 
