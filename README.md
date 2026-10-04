@@ -98,21 +98,41 @@ Discipline lives in the `deep-analysis` skill + AGENTS.md rule 10.
    file.
 
 ## Model tiering (free tier, preserved quota)
-Models are provider-prefixed (`ollama/…` local, `openrouter/…:free` hosted). Chatty roles run
-local (no rate limits); bursty council roles spend the 1,000/day OpenRouter pool. Defaults wired
-across 5+ families so the `/review` consensus vote has uncorrelated blind spots:
+Every shipped pin is `openrouter/…:free` — one API key, no local model server required. Defaults
+are wired across 5+ families so the `/review` consensus vote has uncorrelated blind spots. All of
+it spends the same 1,000/day OpenRouter pool, so cheap roles get small models on purpose:
 | Tier | Models | Use for |
 |---|---|---|
-| Reasoning | `openrouter/nvidia/nemotron-3-ultra-550b-a55b:free` (1M ctx) | architect, debugger, judge, mapper |
-| Executor | `openrouter/poolside/laguna-s-2.1:free` (manual swap to `ollama/ornith:9b` when rate-limited) | the Build agent, step edits |
-| Cross-family review | `openrouter/nvidia/nemotron-3-super-120b-a12b:free`, `openrouter/cohere/north-mini-code:free` | reviewer, tester |
-| Decorrelated review | `ollama/qwen3.5:9b` (local, $0) | reviewer-cheap (different blind spots) |
-| Council diversity | `openrouter/poolside/laguna-s-2.1:free`, `openrouter/google/gemma-4-26b-a4b-it:free`, `openrouter/openai/gpt-oss-20b:free` | proposers, refuter, designer |
-| Mechanical | `ollama/qwen3.5:4b` | commit messages, boilerplate, renames |
+| Reasoning | `nvidia/nemotron-3-ultra-550b-a55b:free` (1M ctx) | architect, debugger, judge, mapper, `/adr`, `/port-from-angular` |
+| Executor | `poolside/laguna-s-2.1:free` | the Build agent, step edits |
+| Cross-family review | `nvidia/nemotron-3-super-120b-a12b:free`, `cohere/north-mini-code:free` | reviewer, synthesizer, tester |
+| Decorrelated review | `minimax/minimax-m3:free` (1M ctx, vision) | reviewer-cheap, pr-reviewer |
+| Council diversity | `thinkingmachines/inkling-small:free`, `poolside/laguna-s-2.1:free`, `minimax/minimax-m2.7:free` | proposers, refuter, designer, `/a11y-review`, `/name` |
+| Mechanical | `poolside/laguna-xs-2.1:free` | commit messages, boilerplate, renames |
 
-⚠️ The `:free` roster churns monthly. `node tools/doctor.mjs` (live, no `--offline`) catches
-delisted slugs; swap in a live `:free` model or a pennies-tier one (see `opencode.jsonc`
-comments).
+The `/review` consensus vote runs four different families — poolside (executor), NVIDIA
+(reviewer), MiniMax (reviewer-cheap), ThinkingMachines (refuter) — and the fallbacks are chosen
+so they stay distinct even if every primary is rate-limited at once. Vision roles (`designer`,
+`pr-reviewer`, `/a11y-review`) are pinned to multimodal slugs on purpose.
+
+**Optional local tier ($0, unmetered).** Running Ollama lets you move the chatty roles
+(`reviewer-cheap`, `/commit`) off the OpenRouter pool entirely. It is opt-in, not assumed —
+see `docs/local-models.md` for the server and `examples/opencode.overlay.example.jsonc` for the
+provider block and which pins to move.
+
+⚠️ **The `:free` roster churns monthly, and the catalog lies.** `opencode models` keeps listing
+slugs OpenRouter has since moved to paid, so a static check passes and only a real call fails
+with *"This model is unavailable for free."* On 2026-08-29 five of nine declared slugs were
+broken this way — including a **primary**. Verify with a live round-trip, never the catalog:
+
+```bash
+node tools/doctor.mjs          # round-trips every primary
+node tools/doctor.mjs --deep   # ...and every fallback (2x the calls, catches the silent rot)
+```
+
+Fallbacks rot most — they only run when everything else broke, so nothing exercises them. Run
+`--deep` after any provider change. Swap in a live `:free` model or a pennies-tier one (see
+`opencode.jsonc` comments).
 
 ## Claude Code parity
 OpenCode is Claude-Code-compatible: it auto-discovers `.claude/skills/` and falls back to

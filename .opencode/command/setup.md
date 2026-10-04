@@ -7,8 +7,10 @@ Set up opencode-amplifier for use. Walk through and report status at each step:
 1. **Place the kit:** ensure `.opencode/` (agent, command, skills, plugins), `AGENTS.md`,
    `PATTERNS.md`, `patterns/`, `memory/` are present — copy into the project, or merge into
    `~/.config/opencode/` for global use across repos.
-2. **Wire the providers:** in `opencode.jsonc`, confirm `provider.ollama.options.baseURL` and
-   `provider.openrouter`'s `OPENROUTER_API_KEY`. Run `opencode models` to list the real model IDs.
+2. **Wire the provider:** in `opencode.jsonc`, confirm `provider.openrouter`'s
+   `OPENROUTER_API_KEY` resolves. Run `opencode models` to list the real model IDs. (If you added
+   the optional local tier, confirm `provider.ollama.options.baseURL` reaches a live server too —
+   a dead endpoint resolves silently and its agents fail with no useful error.)
 3. **Confirm the shipped per-agent pins resolve:** every `model:`/`fallback:` in
    `.opencode/agent/*.md` (and the `model:` in the five pinned `.opencode/command/*.md`) appears
    in `opencode models`. Do NOT rewrite the decorrelated pins unless the user asks — they are

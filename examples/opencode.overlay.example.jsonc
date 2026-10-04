@@ -8,7 +8,12 @@
   // Usage: merge into the project's opencode.jsonc, or keep as ~/.config/opencode/opencode.jsonc.
   "$schema": "https://opencode.ai/config.json",
 
-  // Point the local tier at a LAN model server instead of localhost.
+  // ADD BACK the optional local tier. The kit itself declares NO ollama provider — every shipped
+  // pin is an openrouter/…:free slug, so it works with one API key and no model server. Paste
+  // this block only if you actually run Ollama; a provider pointing at a host that isn't up
+  // resolves silently and its agents fail with no useful error.
+  //
+  // Then move the pins you want local — see the table in docs/local-models.md §4.
   // Stable addressing: give the box a real hostname (mDNS → macmini.local) or a DHCP
   // reservation — never pin a dynamic IP. See docs/local-models.md for the server side.
   "provider": {

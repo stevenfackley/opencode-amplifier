@@ -1,8 +1,8 @@
 ---
 description: Read-only staff-level reviewer for OTHER people's pull requests. Embodies reviewing-others-code — collaborative, severity-labeled, mentoring. Never edits the code under review.
 mode: all
-model: openrouter/google/gemma-4-26b-a4b-it:free     # strong free general reviewer, multimodal; 31b sibling = quality upgrade when its endpoint isn't saturated
-fallback: openrouter/nvidia/nemotron-3-nano-30b-a3b:free   # used by tools/council.mjs retry (default; --no-retry disables); doctor.mjs validates it
+model: openrouter/minimax/minimax-m3:free   # VISION + 1M ctx; MiniMax family, replaces chronically-saturated gemma-4-26b
+fallback: openrouter/nvidia/nemotron-3.5-lightning:free   # NVIDIA != MiniMax primary, 1M ctx; used by tools/council.mjs retry
 temperature: 0.2
 permission:
   edit: deny              # never modify someone else's branch; bash stays on to fetch diffs / run it

@@ -1,6 +1,6 @@
 ---
 description: Write a Conventional Commit message from the staged changes (does not commit)
-model: ollama/qwen3.5:4b   # local + instant — mechanical task, costs nothing
+model: openrouter/poolside/laguna-xs-2.1:free   # XS coding model, 262k — mechanical task, don't spend a big model on it (262k matters: a large staged diff is the input)
 ---
 
 Staged summary:
