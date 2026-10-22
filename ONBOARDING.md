@@ -4,8 +4,11 @@ For a teammate adopting the kit. Goal: from zero to a contract-governed, multi-m
 free, open-weights models, fast.
 
 ## 1. Prereqs
-- OpenCode CLI installed. Ollama running locally (or on a LAN box — see `docs/local-models.md`).
-- `export OPENROUTER_API_KEY=…` (free key from openrouter.ai/keys).
+- OpenCode CLI installed.
+- `export OPENROUTER_API_KEY=…` (free key from openrouter.ai/keys). That's the only requirement —
+  every shipped pin is an `openrouter/…:free` slug.
+- *Optional:* Ollama locally or on a LAN box, to move the chatty roles off the OpenRouter pool —
+  see `docs/local-models.md`.
 
 ## 2. Get the kit
 - Clone this repo, OR merge its `.opencode/`, `AGENTS.md`, `PATTERNS.md`, `patterns/`, `memory/`

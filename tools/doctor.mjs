@@ -2,7 +2,7 @@
 // doctor.mjs — first-run kit verifier. Run from the repo root BEFORE any real work on a new
 // machine, after a provider change, or after an OpenCode upgrade:
 //
-//   node tools/doctor.mjs [--offline]
+//   node tools/doctor.mjs [--offline] [--deep]
 //
 // Static checks always run (file/config sanity, agent mode policy). Live checks call the
 // configured provider — one tiny round-trip per unique pinned model, agent primaries AND
@@ -19,9 +19,12 @@ import { existsSync, readFileSync } from "node:fs";
 import { readAgents } from "./frontmatter.mjs";
 
 const offline = process.argv.includes("--offline");
-const unknown = process.argv.slice(2).filter((a) => a !== "--offline");
+// --deep also round-trips every declared FALLBACK. Off by default because it doubles the live
+// calls, but it is the only thing that catches a rotted fallback: the catalog check can't.
+const deep = process.argv.includes("--deep");
+const unknown = process.argv.slice(2).filter((a) => a !== "--offline" && a !== "--deep");
 if (unknown.length) {
-  console.error(`Unknown argument(s): ${unknown.join(" ")}. Usage: node tools/doctor.mjs [--offline]`);
+  console.error(`Unknown argument(s): ${unknown.join(" ")}. Usage: node tools/doctor.mjs [--offline] [--deep]`);
   process.exit(2);
 }
 
@@ -127,11 +130,33 @@ if (offline) {
     const cmds = commandPins.filter((c) => c.model === m).map((c) => `command:${c.name}`);
     return cmds.length ? `${m} (${cmds.join(", ")})` : m;
   };
+  // ⚠️ The catalog is NOT proof a :free slug is usable. `opencode models` keeps listing slugs
+  // OpenRouter has moved to paid ("This model is unavailable for free") — a static check passes
+  // and only a live call fails. That is how gpt-oss-20b (a PRIMARY) and three fallbacks rotted
+  // undetected. Treat catalog membership as necessary, never sufficient.
   for (const m of primaries) record(catalog.includes(m) ? "PASS" : "FAIL", `model in catalog: ${label(m)}`);
   for (const m of fallbackModels) {
     if (!primaries.includes(m)) record(catalog.includes(m) ? "PASS" : "WARN", `fallback in catalog: ${m}`, catalog.includes(m) ? "" : "declared fallback unavailable — retries will fail");
   }
 
+  // One round-trip + one classifier for both primaries and (with --deep) fallbacks. The three
+  // failure shapes are worth distinguishing because they need different fixes:
+  //   "unavailable for free" -> slug moved to paid; drop the :free suffix or re-pin
+  //   ProviderModelNotFound  -> slug deleted outright; OpenRouter suggests replacements
+  //   timeout                -> endpoint saturated; may recover, but don't PIN to it
+  const roundTrip = (m, sev, name) => {
+    const r = oc(["run", "-m", m], { input: "Reply with exactly: OK", timeout: 90_000 });
+    const blob = `${r.stderr || ""}${r.stdout || ""}`;
+    if (r.status === 0 && /OK/.test(r.stdout || "")) return record("PASS", `round-trip: ${name}`);
+    if (/unavailable for free/i.test(blob)) return record(sev, `round-trip: ${name}`, "DELISTED — moved to paid; catalog still lists it");
+    if (/ProviderModelNotFound/i.test(blob)) return record(sev, `round-trip: ${name}`, "GONE — slug no longer exists");
+    if (r.status === null) return record(sev, `round-trip: ${name}`, "timeout — endpoint saturated; don't pin to it");
+    return record(sev, `round-trip: ${name}`, blob.trim().slice(0, 200));
+  };
+
+  // No pin ships as ollama/* any more — the local tier is OPT-IN (docs/local-models.md). This
+  // branch stays so doctor still validates it for anyone who adds it back, and is simply not
+  // taken otherwise.
   // Local thinking models (qwen3.5 etc.) get an UNBOUNDED token budget through `opencode run`
   // and can reason past any sane timeout on small hardware. For ollama/* we therefore prove the
   // endpoint serves a real, bounded completion via direct HTTP (cold load still allowed 300s);
@@ -158,9 +183,17 @@ if (offline) {
       }
       continue;
     }
-    const r = oc(["run", "-m", m], { input: "Reply with exactly: OK", timeout: 90_000 });
-    if (r.status === 0 && /OK/.test(r.stdout || "")) record("PASS", `round-trip: ${label(m)}`);
-    else record("FAIL", `round-trip: ${label(m)}`, r.status === null ? "timeout" : (r.stderr || r.stdout || "").trim().slice(0, 200));
+    roundTrip(m, "FAIL", label(m));
+  }
+
+  // Fallbacks are the pins MOST likely to rot (they only run when everything else broke) and,
+  // until --deep, the ones with the WEAKEST check. Opt-in because it doubles the live calls.
+  if (deep) {
+    for (const m of fallbackModels) {
+      if (!primaries.includes(m)) roundTrip(m, "FAIL", `fallback ${m}`);
+    }
+  } else if (fallbackModels.some((m) => !primaries.includes(m))) {
+    record("WARN", "fallback round-trips", "skipped — re-run with --deep; a catalog hit does NOT prove a :free slug still serves");
   }
 
   const probe = oc(["run", "--agent", "architect"], { input: "Reply with exactly: OK", timeout: 120_000 });
