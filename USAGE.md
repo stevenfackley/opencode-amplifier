@@ -91,6 +91,7 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 | `dotnet-standard-2.0-compat` | Touching shared .NET code — stay on the ns2.0 compile floor |
 | `porting-angular-to-mobile` | Reproducing an Angular feature on mobile — extract the spec |
 | `accessibility-508` | Building/reviewing user-facing UI — 508/WCAG (legal mandate for defense) |
+| `deep-analysis` | Orchestrating `/deep-*` or `/council` — packet assembly + artifact discipline for fan-out |
 
 ## Agents (call with `@name` or via a command)
 | Agent | Model role | Purpose |
@@ -102,6 +103,12 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 | `debugger` | strong | Disciplined reproduce→isolate→fix→verify |
 | `designer` | strong, temp 0.7 | Bold, non-generic UI |
 | `pr-reviewer` | strong, read-only | Staff review of others' PRs |
+| `proposer-b` | council, family B (poolside) | Blind independent proposal for `/deep-design`, `/deep-debug`, `/council` |
+| `proposer-c` | council, family C (ThinkingMachines) | Blind independent proposal, decorrelated from proposer-b |
+| `judge` | strong | Scores blind proposals against the command's rubric; never authors |
+| `mapper` | strong, 1M ctx | Digests a whole subsystem into a capped brief for `/deep-read` |
+| `refuter` | different family | Attacks merged `/deep-review` findings; only survivors reach you |
+| `synthesizer` | strong | Merges worker outputs into one capped artifact; must fill the dissent register |
 
 ## Plugins (hooks, run automatically)
 | Plugin | Does |
@@ -111,6 +118,7 @@ commands you invoke with `/name`; agents you call with `@name` or via a command.
 | `escalation` | Warns to escalate after repeated non-advancing failures |
 | `guardrails` | Blocks reading secret files; session-idle hook |
 | `metrics` | Optional ROI telemetry → local collector (set `METRICS_ENDPOINT`); off by default |
+| `rot-guard` | Warns before context bloat degrades the model (~75k / ~150k token thresholds) |
 
 ## Patterns
 15 golden examples (C#/.NET, MAUI, Swift, SwiftUI, TS, Python, CSS, Angular). Browse

@@ -10,8 +10,8 @@ of this is *pointing at* existing assets rather than rebuilding them.
 | **CLAUDE.md** project memory | `AGENTS.md` (project + global) with `~/.claude/CLAUDE.md` fallback | `AGENTS.md` rails | **Parity** |
 | **Subagents** (Explore, Plan, reviewers…) | Agents in `.opencode/agent/` with per-agent `model` | `architect`, `executor` (Build), `reviewer`, `reviewer-cheap`, `tester`, `debugger`; built-in `Explore`/`General`/`Scout` | **Parity+** |
 | **Slash commands** | `.opencode/command/` with `$ARGUMENTS`, `@file`, `` !`shell` `` | `/plan /verify /debug /pattern /cross-check /review /spec-tests /consistency /evidence /reground /revert-green` | **Parity** |
-| **MCP servers** | `opencode.json` `mcp` (local + remote) | docs, git, filesystem-over-corpus, github, playwright, episodic-memory (templated) | **Parity** |
-| **Hooks** | Plugins in `.opencode/plugins/` (JS/TS) with events `tool.execute.before/after`, `session.*`, `file.edited`, `permission.*` | `guardrails`, `tdd-lock`, `compaction`, `escalation` | **Parity** |
+| **MCP servers** | `opencode.json` `mcp` (local + remote) | docs, git, filesystem-over-corpus, playwright, episodic-memory (templated) | **Parity** |
+| **Hooks** | Plugins in `.opencode/plugins/` (JS/TS) with events `tool.execute.before/after`, `session.*`, `file.edited`, `permission.*` | `guardrails`, `tdd-lock`, `compaction`, `escalation`, `metrics`, `rot-guard` | **Parity** |
 | **Memory / recall** | `instructions` glob loads `memory/MEMORY.md`; `episodic-memory` MCP for semantic recall | `memory/` + MEMORY.md + episodic-memory MCP | **Parity** |
 | **Plan mode** | Built-in Plan agent (restricted) + `architect` | `/plan` → `TASK.json` + checklist | **Parity+** |
 | **Instructions/rules globbing** | `instructions: [...]` supports globs + remote URLs | loads `AGENTS.md`, `memory/MEMORY.md`, `.cursor/rules/*.md` | **Parity** |
